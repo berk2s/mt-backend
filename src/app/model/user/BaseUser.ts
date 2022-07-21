@@ -28,7 +28,7 @@ export const userSchemaOptions: SchemaOptions = {
 
 const baseUserSchema = new Schema({
     fullName: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
     birthDate: { type: Date, required: true },

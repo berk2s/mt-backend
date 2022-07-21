@@ -31,6 +31,8 @@ class App {
     this.app = express()
     this.routes = routes
 
+    this.app.use(express.static('public'))
+
     this.app.use(bodyParser.json({ limit: '5mb' }))
     this.app.use(bodyParser.urlencoded({ extended: false }))
 

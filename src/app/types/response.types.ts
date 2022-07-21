@@ -13,4 +13,5 @@ export interface UserResponse {
   languages?: string[]
   workoutDays?: WorkoutDays[]
   experience?: Experience
+  imageUrl?: string
 }

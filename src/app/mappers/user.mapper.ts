@@ -12,6 +12,7 @@ export abstract class UserMapper {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
+      imageUrl: user.imageUrl,
       birthday: user.birthDate,
       gender: user.sex,
       languages: user.languages,
@@ -20,8 +21,10 @@ export abstract class UserMapper {
 
   public static userToDTO(user: AthleteUserDocument): UserResponse {
     return {
+      id: user._id,
       fullName: user.fullName,
       email: user.email,
+      imageUrl: user.imageUrl,
       birthday: user.birthDate,
       gender: user.sex,
       languages: user.languages,

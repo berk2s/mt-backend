@@ -93,3 +93,7 @@ Thumbs.db
 docs/
 
 coverage/
+
+public/images/*
+
+!public/images/.gitkeep 

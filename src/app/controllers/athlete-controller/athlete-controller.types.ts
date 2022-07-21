@@ -24,12 +24,6 @@ export class RegisterAthleteRequest extends BodyDTO {
   fullName?: string
 
   @IsDefined({
-    message: 'imageUrl.empty',
-  })
-  @Expose()
-  imageUrl?: string
-
-  @IsDefined({
     message: 'email.empty',
   })
   @IsEmail(

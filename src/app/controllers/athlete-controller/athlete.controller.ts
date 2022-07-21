@@ -10,10 +10,10 @@ import { RegisterAthleteRequest } from './athlete-controller.types'
 /**
  * Athlete Controller
  * @class
- * @alias app.controller.registerController.RegisterController
+ * @alias app.controller.athleteController.AthleteController
  */
 class AthleteController {
-  public readonly ENDPOINT: string = '/athlete'
+  public readonly ENDPOINT: string = '/user/athlete'
 
   /**
    * Handles register athlete post request
@@ -25,7 +25,6 @@ class AthleteController {
   ): Promise<void> {
     try {
       const registeredUser = await userService.registerAthlete(req.bodyDto)
-
       res.status(201).json(registeredUser)
     } catch (err) {
       next(err)
