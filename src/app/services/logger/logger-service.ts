@@ -9,6 +9,8 @@ import winston from 'winston'
  * Logger Service
  *
  * Abstracts logger service behind the scene
+ *
+ * @alias app.services.loggerService.LoggerService
  */
 class LoggerService {
   private logger: winston.Logger
