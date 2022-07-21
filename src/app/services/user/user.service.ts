@@ -2,7 +2,7 @@
  * @module app.services.user
  */
 
-import { RegisterAthleteRequest } from '@app/controllers/athlete-controller/athlete-controller.types'
+import { RegisterAthleteRequest } from '@app/controllers/athlete/athlete-controller.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UserMapper } from '@app/mappers/user.mapper'

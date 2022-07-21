@@ -3,12 +3,12 @@
  */
 
 import { Application } from 'express'
-import healthController from '@app/controllers/health-controller/health.controller'
+import healthController from '@app/controllers/health/health.controller'
 import { bodyValidation } from '@app/middlewares/body-validation.middleware'
-import { RegisterAthleteRequest } from '@app/controllers/athlete-controller/athlete-controller.types'
-import athleteController from '@app/controllers/athlete-controller/athlete.controller'
+import { RegisterAthleteRequest } from '@app/controllers/athlete/athlete-controller.types'
+import athleteController from '@app/controllers/athlete/athlete.controller'
 import uploadMiddleware from '@app/middlewares/image-upload.middleware'
-import userController from '@app/controllers/user-controller/user.controller'
+import userController from '@app/controllers/user/user.controller'
 
 /**
  * Creates and configures routes that belongs to application
