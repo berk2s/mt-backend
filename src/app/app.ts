@@ -5,6 +5,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import routes, { Routes } from './routes/routes'
+import { errorHandler } from './middlewares/error-handler'
 
 /**
  * Application starter
@@ -34,6 +35,8 @@ class App {
     this.app.use(bodyParser.urlencoded({ extended: false }))
 
     this.routes.routes(this.app)
+
+    this.app.use(errorHandler)
   }
 }
 
