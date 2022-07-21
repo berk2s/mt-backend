@@ -42,16 +42,18 @@ const purgeUnnecessaryLogFiles = (fileName: any) => {
       // This piece of code deletes log file if older than seven day
       if (DateUtility.findDaysDifference(date, oneWeekAgo) > 7) {
         fs.unlink(`./logs/${fileName}`, deletedFileCallBack(fileName))
-      } 
+      }
     }
   }
 }
 
 const deletedFileCallBack = (fileName: any) => (err: any) => {
-    if(err) {
-        loggerService.error(err);
-        return;
-    }
+  if (err) {
+    loggerService.error(err)
+    return
+  }
 
-    loggerService.info("Log file which is older than 7 day has been deleted [fileName: {}]", ${fileName})
+  loggerService.info(
+    `Log file which is older than 7 day has been deleted [fileName: ${fileName}]`,
+  )
 }

@@ -18,6 +18,7 @@ class LoginController {
    * Handles login request and passes to corresponding service
    */
   public async login(
+    err: Error,
     req: IncomingRequest<LoginRequest>,
     res: Response,
     next: NextFunction,
