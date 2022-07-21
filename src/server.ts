@@ -1,4 +1,4 @@
-import '@config/env.config'
+import '@app/config/env.config'
 import starter from '@app/app'
 
 /**
