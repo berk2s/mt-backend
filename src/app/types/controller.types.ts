@@ -13,6 +13,7 @@ export interface IncomingRequest<T extends BodyDTO> extends Request {
   body: T
   bodyDto: T
   file?: any
+  userId?: string
 }
 
 /**

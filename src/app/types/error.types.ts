@@ -26,4 +26,5 @@ export enum ErrorTypes {
   EXISTS = 'exists',
   NOT_FOUND = 'not_found',
   BAD_CREDENTIALS = 'bad_credentials',
+  INVALID_GRANT = 'invalid_grant',
 }
