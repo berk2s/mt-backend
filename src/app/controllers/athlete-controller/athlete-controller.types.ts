@@ -13,7 +13,7 @@ import {
 /**
  * Register User DTO
  */
-export class RegisterUserRequest extends BodyDTO {
+export class RegisterAthleteRequest extends BodyDTO {
   @IsDefined({
     message: 'fullName.empty',
   })

@@ -5,26 +5,26 @@
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
-import { RegisterUserRequest } from './register-controller.types'
+import { RegisterAthleteRequest } from './athlete-controller.types'
 
 /**
- * User Register Controller
+ * Athlete Controller
  * @class
  * @alias app.controller.registerController.RegisterController
  */
-class RegisterController {
-  public readonly ENDPOINT: string = '/register'
+class AthleteController {
+  public readonly ENDPOINT: string = '/athlete'
 
   /**
-   * Handles register user post request
+   * Handles register athlete post request
    */
   public async registerUser(
-    req: IncomingRequest<RegisterUserRequest>,
+    req: IncomingRequest<RegisterAthleteRequest>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      const registeredUser = await userService.register(req.bodyDto)
+      const registeredUser = await userService.registerAthlete(req.bodyDto)
 
       res.status(201).json(registeredUser)
     } catch (err) {
@@ -33,4 +33,4 @@ class RegisterController {
   }
 }
 
-export default new RegisterController()
+export default new AthleteController()

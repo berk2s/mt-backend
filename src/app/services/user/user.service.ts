@@ -2,9 +2,9 @@
  * @module app.services.user
  */
 
-import { RegisterUserRequest } from '@app/controllers/register-controller/register-controller.types'
+import { RegisterAthleteRequest } from '@app/controllers/athlete-controller/athlete-controller.types'
 import { UserMapper } from '@app/mappers/user.mapper'
-import { NormalUser } from '@app/model/user/User'
+import { AthleteUser } from '@app/model/user/Athlete'
 import { UserResponse } from '@app/types/response.types'
 import loggerService from '../logger/logger-service'
 
@@ -14,8 +14,8 @@ import loggerService from '../logger/logger-service'
  * @alias app.services.user.UserService
  */
 class UserService {
-  public async register(
-    registerUser: RegisterUserRequest,
+  public async registerAthlete(
+    registerUser: RegisterAthleteRequest,
   ): Promise<UserResponse> {
     const {
       fullName,
@@ -29,7 +29,7 @@ class UserService {
       trainingExperience,
     } = registerUser
 
-    const user = new NormalUser({
+    const athlete = new AthleteUser({
       fullName,
       imageUrl,
       email,
@@ -41,11 +41,11 @@ class UserService {
       trainingDays,
     })
 
-    await user.save()
+    await athlete.save()
 
-    loggerService.info(`User has been created [userId: ${user._id}]`)
+    loggerService.info(`User has been created [userId: ${athlete._id}]`)
 
-    return Promise.resolve(UserMapper.userToDTO(user))
+    return Promise.resolve(UserMapper.userToDTO(athlete))
   }
 }
 

@@ -3,7 +3,7 @@
  */
 
 import { BaseUserDocument } from '@app/model/user/BaseUser'
-import { NormalUser, NormalUserDocument } from '@app/model/user/User'
+import { AthleteUser, AthleteUserDocument } from '@app/model/user/Athlete'
 import { UserResponse } from '@app/types/response.types'
 
 export abstract class UserMapper {
@@ -18,7 +18,7 @@ export abstract class UserMapper {
     }
   }
 
-  public static userToDTO(user: NormalUserDocument): UserResponse {
+  public static userToDTO(user: AthleteUserDocument): UserResponse {
     return {
       fullName: user.fullName,
       email: user.email,

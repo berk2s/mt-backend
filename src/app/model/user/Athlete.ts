@@ -6,15 +6,15 @@
  import { Schema } from 'mongoose'
  import { BaseUser, BaseUserDocument, userSchemaOptions } from './BaseUser'
 
-export interface NormalUserDocument extends BaseUserDocument {
+export interface AthleteUserDocument extends BaseUserDocument {
   trainingExperience: Experience
   trainingDays: WorkoutDays[]
 }
 
-const normalUserSchema = new Schema({
+const athleteUserSchema = new Schema({
    trainingExperience: { type: Array<String>, required: true },
    trainingDays: { type: Array<String>, required: true}
 }, userSchemaOptions)
  
 
-export const NormalUser = BaseUser.discriminator<NormalUserDocument>('NORMAL_USER', normalUserSchema);
+export const AthleteUser = BaseUser.discriminator<AthleteUserDocument>('ATHLETE', athleteUserSchema);

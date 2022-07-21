@@ -13,19 +13,11 @@ import loggerService from '@app/services/logger/logger-service'
  */
 schedule.scheduleJob('* * */23 * * *', () => {
   fs.readdir('./logs', (err: any, files: any) => {
-<<<<<<< HEAD
     if (err) {
       loggerService.error(err)
       return
     }
 
-=======
-    if(err) {
-        loggerService.error(err);
-        return;
-    }
-    
->>>>>>> 8ee9a64f8d955f65844a6f744e4068fc0336356d
     files.forEach(purgeUnnecessaryLogFiles)
   })
 })

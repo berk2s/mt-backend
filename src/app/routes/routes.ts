@@ -4,9 +4,9 @@
 
 import { Application } from 'express'
 import healthController from '@app/controllers/health-controller/health.controller'
-import registerController from '@app/controllers/register-controller/register.controller'
 import { bodyValidation } from '@app/middlewares/body-validation.middleware'
-import { RegisterUserRequest } from '@app/controllers/register-controller/register-controller.types'
+import { RegisterAthleteRequest } from '@app/controllers/athlete-controller/athlete-controller.types'
+import athleteController from '@app/controllers/athlete-controller/athlete.controller'
 
 /**
  * Creates and configures routes that belongs to application
@@ -23,10 +23,10 @@ export class Routes {
     app.route(healthController.ENDPOINT).get(healthController.health)
 
     app
-      .route(registerController.ENDPOINT)
+      .route(athleteController.ENDPOINT)
       .post(
-        bodyValidation<RegisterUserRequest>(RegisterUserRequest),
-        registerController.registerUser,
+        bodyValidation<RegisterAthleteRequest>(RegisterAthleteRequest),
+        athleteController.registerUser,
       )
   }
 }
