@@ -19,7 +19,7 @@ export class LoginRequest extends BodyDTO {
   password?: String
 }
 
-export class LoginResponse {
+export class TokenResponse {
   accessToken: string
   expiresIn: number
 }

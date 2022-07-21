@@ -3,6 +3,7 @@
  */
 
 import { RegisterAthleteRequest } from '@app/controllers/athlete/athlete-controller.types'
+import { TokenResponse } from '@app/controllers/login/login-controller.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UserMapper } from '@app/mappers/user.mapper'
@@ -10,9 +11,11 @@ import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
 import { UserResponse } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
+import { TokenUtility } from '@app/utilities/token-utility'
 import { ObjectId } from 'mongoose'
 import { loggers } from 'winston'
 import imageService from '../image/image.service'
+import jwtService from '../jwt/jwt.service'
 import loggerService from '../logger/logger-service'
 
 /**
@@ -32,7 +35,7 @@ class UserService {
    */
   public async registerAthlete(
     registerUser: RegisterAthleteRequest,
-  ): Promise<UserResponse> {
+  ): Promise<TokenResponse> {
     const {
       fullName,
       email,
@@ -66,9 +69,13 @@ class UserService {
 
     await athlete.save()
 
-    loggerService.info(`User has been created [userId: ${athlete._id}]`)
+    loggerService.info(`User succesfully created [userId: ${athlete._id}]`)
 
-    return Promise.resolve(UserMapper.userToDTO(athlete))
+    const token = await jwtService.generate(
+      TokenUtility.generatePayload(athlete),
+    )
+
+    return TokenUtility.generateResponse(token)
   }
 
   /**

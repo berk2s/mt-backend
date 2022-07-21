@@ -5,11 +5,12 @@
 import tokenConfig from '@app/config/token.config'
 import {
   LoginRequest,
-  LoginResponse,
+  TokenResponse,
 } from '@app/controllers/login/login-controller.types'
 import { BadCredentials } from '@app/exceptions/bad-credentials-error'
 import { BaseUser } from '@app/model/user/BaseUser'
 import { HashUtility } from '@app/utilities/hash-utility'
+import { TokenUtility } from '@app/utilities/token-utility'
 import jwtService from '../jwt/jwt.service'
 import loggerService from '../logger/logger-service'
 
@@ -25,7 +26,7 @@ export class LoginService {
    * Logs in the User
    * Returns access token with expiry time
    */
-  public async login(req: LoginRequest): Promise<LoginResponse> {
+  public async login(req: LoginRequest): Promise<TokenResponse> {
     const { email, password } = req
     const user = await BaseUser.findOne({ email: email })
 
@@ -41,17 +42,11 @@ export class LoginService {
       throw new BadCredentials('credentials.invalid')
     }
 
-    const token = await jwtService.generate({
-      userId: user._id,
-      fullName: user.fullName,
-    })
+    const token = await jwtService.generate(TokenUtility.generatePayload(user))
 
     loggerService.info(`User successfully logged in [userId: ${user._id}}`)
 
-    return {
-      accessToken: token,
-      expiresIn: tokenConfig.expiresIn,
-    }
+    return TokenUtility.generateResponse(token)
   }
 }
 
