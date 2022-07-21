@@ -10,8 +10,9 @@ import { Request } from 'express'
  *  while sending the request
  */
 export interface IncomingRequest<T extends BodyDTO> extends Request {
-  body: any
+  body: T
   bodyDto: T
+  file?: any
 }
 
 /**

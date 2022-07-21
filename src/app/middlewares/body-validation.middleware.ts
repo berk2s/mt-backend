@@ -17,17 +17,19 @@ import loggerService from '@app/services/logger/logger-service'
  */
 export const bodyValidation = <T extends BodyDTO>(dto: BodyDTO | any) => {
   return async (req: IncomingRequest<T>, res: Response, next: NextFunction) => {
-    const mappedClass: T = plainToInstance<T, any>(dto, req.body)[0]
+    const mappedClass: T = plainToInstance(dto, req.body)
 
     const validationErrors = await validate(mappedClass, {
       skipMissingProperties: true,
     })
 
     if (validationErrors.length > 0) {
-      let errorDetails = validationErrors.map((val) => val.constraints)
+      const errorDetails = validationErrors.map((val) => val.constraints)
 
       loggerService.warn(
-        `The request body is not valid [requestBody: ${req.body}]`,
+        `The request body is not valid [requestBody: ${JSON.stringify(
+          req.body,
+        )}]`,
       )
 
       return res.status(400).send({
