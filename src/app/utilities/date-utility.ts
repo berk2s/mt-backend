@@ -2,6 +2,11 @@
  * @module app.utilities
  */
 
+/**
+ * Date Utility
+ *
+ * @alias app.utilities.DateUtility
+ */
 export abstract class DateUtility {
   /**
    * Calculates how many days difference between two day
