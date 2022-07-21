@@ -26,7 +26,6 @@ class MongoConnection {
    * Mongo connection options to be passed Mongoose
    */
   private readonly mongoConnectionOptions: any = {
-    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }
