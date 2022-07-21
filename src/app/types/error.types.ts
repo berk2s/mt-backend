@@ -25,4 +25,5 @@ export enum ErrorTypes {
   UNKNOWN_ERROR = 'unknown_error',
   EXISTS = 'exists',
   NOT_FOUND = 'not_found',
+  BAD_CREDENTIALS = 'bad_credentials',
 }

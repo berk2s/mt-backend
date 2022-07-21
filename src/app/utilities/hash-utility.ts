@@ -18,4 +18,14 @@ export abstract class HashUtility {
       throw new HashingError('hashing.failed')
     }
   }
+
+  public static async compare(rawString, hashedString): Promise<boolean> {
+    try {
+      const matches = await bcrypt.compare(rawString, hashedString)
+
+      return matches
+    } catch (err) {
+      throw new HashingError('hashing.failed')
+    }
+  }
 }
