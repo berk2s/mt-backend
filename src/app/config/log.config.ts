@@ -17,11 +17,16 @@ const logConfig = {
       maxSize: '5m',
       maxFiles: '1d',
     }),
+    new winston.transports.Stream({
+      stream: process.stderr,
+      level: 'debug',
+    }),
   ],
   format: format.combine(
     format.timestamp({
       format: 'MM-DD-YYYY HH:MM',
     }),
+    format.colorize(),
     format.printf((log) => `${log.timestamp} ${log.level}: ${log.message}`),
   ),
 }
