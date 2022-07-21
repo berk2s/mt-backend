@@ -20,7 +20,7 @@ export interface BaseUserDocument extends Document {
   languages: string[]
 }
 
-interface BaseUserModel extends Model<BaseUserDocument> {}
+export interface BaseUserModel extends Model<BaseUserDocument> {}
 
 export const userSchemaOptions: SchemaOptions = {
   discriminatorKey: "userType"
