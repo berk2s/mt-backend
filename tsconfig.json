@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "rootDir": "./",
+    "outDir": "./dist",
+    "baseUrl": "src",
+    "lib": ["ES2021.String"],
+    "esModuleInterop": true,
+    "strict": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@app/*": ["app/*"],
+      "@config/*": ["./app/config/*"],
+      "@controllers/*": ["./app/controllers/*"],
+      "@routes/*": ["./app/routes/*"],
+      "@services/*": ["./app/services/*"],
+      "@exceptions/*": ["./app/exceptions/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
