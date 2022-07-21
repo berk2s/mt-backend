@@ -1,17 +1,22 @@
 import '@app/config/env.config'
 import starter from '@app/app'
+import mongoConnection from '@app/config/mongo/mongo.config'
+import loggerService from '@app/services/logger/logger-service'
 
 /**
- * Starts application with defined port in the env file
+ * Firstly, tries connect to the MongoDB
+ * Then, starts application with defined port in the env file
  */
-starter.app.listen(process.env.PORT, () => {
-  console.log('Server is available! at ' + process.env.PORT)
+mongoConnection.connect(() => {
+  starter.app.listen(process.env.PORT, () => {
+    loggerService.info('Server is available! at ' + process.env.PORT)
+  })
 })
 
 process.on('uncaughtException', (err) => {
   try {
-    console.log('Handled an uncaughtException:', err)
+    loggerService.warn('Uncaught exception: ', err)
   } catch (err) {
-    console.log(err)
+    loggerService.warn('Uncaught exception: ', err)
   }
 })
