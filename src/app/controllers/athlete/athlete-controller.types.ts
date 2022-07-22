@@ -124,3 +124,6 @@ export interface InteractionResponse {
 }
 
 export interface LikeAthleteResponse extends InteractionResponse {}
+export interface DislikeAthleteResponse extends InteractionResponse {
+  dislikeEndDate: Date
+}

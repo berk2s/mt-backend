@@ -7,6 +7,7 @@ import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
 import {
+  DislikeAthleteRequest,
   LikeAthleteRequest,
   RegisterAthleteRequest,
 } from './athlete-controller.types'
@@ -52,6 +53,28 @@ class AthleteController {
       )
 
       res.status(200).send(likedResponse)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles dislike athlete request
+   */
+  public async dislikeAthlete(
+    req: IncomingRequest<DislikeAthleteRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const dislikedResponse = await interactionService.dislikeAthlete(
+        userId,
+        req.bodyDto.dislikedUserId,
+      )
+
+      res.status(200).send(dislikedResponse)
     } catch (err) {
       next(err)
     }

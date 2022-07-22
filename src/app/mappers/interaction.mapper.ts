@@ -2,7 +2,11 @@
  * @module app.mappers
  */
 
-import { LikeAthleteResponse } from '@app/controllers/athlete/athlete-controller.types'
+import {
+  DislikeAthleteResponse,
+  LikeAthleteResponse,
+} from '@app/controllers/athlete/athlete-controller.types'
+import { DislikedInteractionDocument } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteractionDocument } from '@app/model/interaction/LikedInteraction'
 
 export abstract class InteractionMapper {
@@ -15,6 +19,19 @@ export abstract class InteractionMapper {
       toUserId: document.toUser,
       interactionType: document.interactionType,
       createdAt: document.createdAt,
+    }
+  }
+
+  public static dislikedInteractionToDTO(
+    document: DislikedInteractionDocument,
+  ): DislikeAthleteResponse {
+    return {
+      id: document._id,
+      userId: document.user,
+      toUserId: document.toUser,
+      interactionType: document.interactionType,
+      createdAt: document.createdAt,
+      dislikeEndDate: document.dislikeEndDate,
     }
   }
 }

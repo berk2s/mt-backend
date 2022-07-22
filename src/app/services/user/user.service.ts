@@ -102,7 +102,7 @@ class UserService {
     const fileName = await imageService.save(buffer)
 
     user.imageUrl = fileName
-    user.save()
+    await user.save()
 
     loggerService.info(
       `User profile photo has been updated. [userId: ${user._id}]`,

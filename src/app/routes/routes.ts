@@ -6,6 +6,7 @@ import { Application } from 'express'
 import healthController from '@app/controllers/health/health.controller'
 import { bodyValidation } from '@app/middlewares/body-validation.middleware'
 import {
+  DislikeAthleteRequest,
   LikeAthleteRequest,
   RegisterAthleteRequest,
 } from '@app/controllers/athlete/athlete-controller.types'
@@ -55,6 +56,14 @@ export class Routes {
         tokenVerify,
         bodyValidation<LikeAthleteRequest>(LikeAthleteRequest),
         athleteController.likeAthlete,
+      )
+
+    app
+      .route(`${athleteController.ENDPOINT}/dislikes`)
+      .post(
+        tokenVerify,
+        bodyValidation<DislikeAthleteRequest>(DislikeAthleteRequest),
+        athleteController.dislikeAthlete,
       )
   }
 }

@@ -2,7 +2,11 @@
  * @module app.services.interaction
  */
 
-import { LikeAthleteResponse } from '@app/controllers/athlete/athlete-controller.types'
+import interactionConfig from '@app/config/interaction.config'
+import {
+  DislikeAthleteResponse,
+  LikeAthleteResponse,
+} from '@app/controllers/athlete/athlete-controller.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { InteractionMapper } from '@app/mappers/interaction.mapper'
@@ -10,7 +14,9 @@ import {
   BaseInteraction,
   BaseInteractionModel,
 } from '@app/model/interaction/BaseInteraction'
+import { DislikedInteraction } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteraction } from '@app/model/interaction/LikedInteraction'
+import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import userService from '../user/user.service'
 
@@ -20,10 +26,10 @@ import userService from '../user/user.service'
  * @alias app.services.interaction.InteractionService
  */
 class InteractionService {
-  private baseInteractio: BaseInteractionModel
+  private baseInteraction: BaseInteractionModel
 
   constructor() {
-    this.baseInteractio = BaseInteraction
+    this.baseInteraction = BaseInteraction
   }
 
   /**
@@ -33,35 +39,15 @@ class InteractionService {
     userId: string,
     likedUserId: string,
   ): Promise<LikeAthleteResponse> {
-    if (
-      !(await userService.existsById(userId)) ||
-      !(await userService.existsById(likedUserId))
-    ) {
-      loggerService.warn(
-        `User with given id doesn't eixsts [userId: ${userId}]`,
-      )
-      throw new DocumentNotFound('user.notFound')
-    }
-
-    const isLikedBefore = await this.baseInteractio.exists({
-      user: userId,
-      toUser: likedUserId,
-      interactionType: 'LIKED',
-    })
-
-    if (isLikedBefore) {
-      loggerService.warn(
-        `The Athlete already liked this athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
-      )
-      throw new DocumentExists('liked.before')
-    }
+    await this.checkUsersExist(userId, likedUserId)
+    await this.checkDocumentExists(userId, likedUserId, 'LIKED')
 
     const likedInteraction = new LikedInteraction({
       user: userId,
       toUser: likedUserId,
     })
 
-    likedInteraction.save()
+    await likedInteraction.save()
 
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
@@ -70,6 +56,88 @@ class InteractionService {
     return Promise.resolve(
       InteractionMapper.likedInteractionToDTO(likedInteraction),
     )
+  }
+
+  /**
+   * Disliked the User
+   */
+  public async dislikeAthlete(
+    userId: string,
+    dislikedUserId: string,
+  ): Promise<DislikeAthleteResponse> {
+    await this.checkUsersExist(userId, dislikedUserId)
+    await this.checkDocumentExists(userId, dislikedUserId, 'DISLIKED')
+
+    const likedInteraction = await this.baseInteraction.findOne({
+      user: userId,
+      toUser: dislikedUserId,
+      interactionType: 'LIKED',
+    })
+
+    if (likedInteraction) {
+      await likedInteraction.remove()
+      loggerService.info(
+        `The liked interaction revoked. The Athlete stopped liking the Athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
+      )
+    }
+
+    const { dislikeBlockingPeriod } = interactionConfig
+    const currDate = new Date()
+    currDate.setSeconds(currDate.getSeconds() + dislikeBlockingPeriod)
+
+    const dislikedInteraction = new DislikedInteraction({
+      user: userId,
+      toUser: dislikedUserId,
+      dislikeEndDate: currDate,
+    })
+
+    await dislikedInteraction.save()
+
+    loggerService.info(
+      `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
+    )
+
+    return Promise.resolve(
+      InteractionMapper.dislikedInteractionToDTO(dislikedInteraction),
+    )
+  }
+
+  private async checkUsersExist(
+    userId: string,
+    interactedUserId: string,
+  ): Promise<void> {
+    if (!(await userService.existsById(userId))) {
+      loggerService.warn(
+        `User with given id doesn't eixsts [userId: ${userId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
+
+    if (!(await userService.existsById(interactedUserId))) {
+      loggerService.warn(
+        `User with given id doesn't eixsts [userId: ${interactedUserId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
+  }
+
+  private async checkDocumentExists(
+    userId: string,
+    interactedUserId: string,
+    interactionType: 'LIKED' | 'DISLIKED',
+  ): Promise<void> {
+    const isInteractedBefore = await this.baseInteraction.exists({
+      user: userId,
+      toUser: interactedUserId,
+      interactionType: interactionType,
+    })
+
+    if (isInteractedBefore) {
+      loggerService.warn(
+        `The Athlete already liked this athlete [userId: ${userId}, toUserId: ${interactedUserId}]`,
+      )
+      throw new DocumentExists(`${interactionType.toLowerCase()}.before`)
+    }
   }
 }
 
