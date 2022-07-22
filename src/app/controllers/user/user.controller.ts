@@ -9,7 +9,6 @@ import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction } from 'express'
 import { Response } from 'express'
 import { UpdateProfilePhotoRequest } from './user-controller.types'
-
 /**
  * User Controller
  * @class

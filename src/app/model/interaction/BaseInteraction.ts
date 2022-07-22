@@ -11,12 +11,15 @@ import {
   SchemaOptions,
 } from 'mongoose'
 
+/**
+ * Base document for liked and disliked interactions
+ */
 export interface BaseInteractionDocument extends Document {
   _id?: ObjectId
   user: string
   toUser: string
-  createdAt: string
   interactionType: 'LIKED' | 'DISLIKED'
+  createdAt: Date
 }
 
 export interface BaseInteractionModel extends Model<BaseInteractionDocument> {}

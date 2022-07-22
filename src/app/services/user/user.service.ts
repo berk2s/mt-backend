@@ -110,6 +110,17 @@ class UserService {
 
     return Promise.resolve(UserMapper.baseUsertoDTO(user))
   }
+
+  /**
+   * Checks user exists or not
+   */
+  public async existsById(userId: string): Promise<boolean> {
+    const doesUserExists = await this.baseUserModel.exists({
+      _id: userId,
+    })
+
+    return Promise.resolve(doesUserExists ? true : false)
+  }
 }
 
 export default new UserService()
