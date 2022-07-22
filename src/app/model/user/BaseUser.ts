@@ -18,6 +18,7 @@ export interface BaseUserDocument extends Document {
   birthDate: Date
   sex: Gender
   languages: string[]
+  userType?: string
 }
 
 export interface BaseUserModel extends Model<BaseUserDocument> {}
