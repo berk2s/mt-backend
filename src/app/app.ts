@@ -6,6 +6,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import routes, { Routes } from './routes/routes'
 import { errorHandler } from './middlewares/error-handler'
+import cors from 'cors'
 
 /**
  * Application starter
@@ -30,6 +31,8 @@ class App {
   constructor() {
     this.app = express()
     this.routes = routes
+
+    this.app.use(cors())
 
     this.app.use(express.static('public'))
 
