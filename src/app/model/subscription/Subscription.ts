@@ -13,6 +13,7 @@ import {
 
 export interface SubscriptionDocument extends Document {
   _id?: ObjectId
+  foreginId: string
   user: string
   package: string
   status: 'ACTIVE' | 'INACTIVE'
@@ -29,6 +30,10 @@ export const subscriptionOptions: SchemaOptions = {
 
 const subscriptionSchema = new Schema(
   {
+    foreginId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',

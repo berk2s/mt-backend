@@ -7,6 +7,7 @@ import { StripeError } from '@app/exceptions/stripe-error'
 import { CreatedSessionResponse } from '@app/types/response.types'
 import Stripe from 'stripe'
 import loggerService from '../logger/logger-service'
+import subscriptionService from '../subscription/subscription.service'
 
 /**
  * Stripe service
@@ -15,6 +16,7 @@ import loggerService from '../logger/logger-service'
  */
 class StripeService {
   private stripe: Stripe
+
   constructor() {
     const { apiSecret } = stripeConfig
     this.stripe = new Stripe(apiSecret, {
@@ -116,18 +118,33 @@ class StripeService {
       throw new StripeError('webhook.failed')
     }
 
-    let subscription = event.data.object
-    let status = subscription.status
+    const {
+      metadata: { athleteId, lookupKey },
+      id,
+    } = event.data.object
 
     switch (event.type) {
       case 'customer.subscription.created':
-        loggerService.info(`CREATED: ${JSON.stringify(subscription)}`)
+        loggerService.info(
+          `Subscription created webhook received [foreginId: ${id}, athleteId: ${athleteId}, lookupKey: ${lookupKey}]`,
+        )
+        subscriptionService.subscribe(athleteId, lookupKey, id)
         break
       case 'customer.subscription.deleted':
-        loggerService.info(`DELETED: ${subscription}`)
+        loggerService.info(
+          `Subscription deleted webhook received [foreginId: ${id}]`,
+        )
+        subscriptionService.unsubscribe(athleteId, lookupKey)
         break
       default:
-        loggerService.info(`Unhandled event type ${event.type}`)
+        let eventId = null
+
+        if (event.data && event.data.object && event.data.object.id)
+          eventId = event.data.object.id
+
+        loggerService.info(
+          `An event received from Stripe [type: ${event.type}, id: ${eventId}]`,
+        )
     }
   }
 
@@ -184,6 +201,42 @@ class StripeService {
     if (subscription.data && subscription.data.length === 0) return null
 
     return subscription.data[0]
+  }
+
+  /**
+   * Gets subscription by subscription id
+   */
+  public async getSubscriptionById(subscriptionId: string) {
+    let subscription
+
+    try {
+      subscription = await this.stripe.subscriptions.search({
+        query: "status:'active' AND id:'" + subscriptionId + "'",
+      })
+    } catch (err) {
+      loggerService.warn(
+        `Something went wrong while getting Stripe subscription by subscription id [subscriptionId: ${subscriptionId}, err: ${err}]`,
+      )
+      throw new StripeError('subscription.error')
+    }
+
+    if (subscription.data && subscription.data.length === 0) return null
+
+    return subscription.data[0]
+  }
+
+  /**
+   * Deletes subscription
+   */
+  public async unsubscribe(subscriptionId) {
+    try {
+      this.stripe.subscriptions.del(subscriptionId)
+    } catch (err) {
+      loggerService.warn(
+        `Something went wrong while Stripe unsubscribing [subscriptionId: ${subscriptionId}, err: ${err}]`,
+      )
+      throw new StripeError('subscription.error')
+    }
   }
 
   private async isSubscribedBefore(
