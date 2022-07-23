@@ -38,9 +38,12 @@ class MatchingService {
       throw new DocumentExists('matching.exists')
     }
 
+    console.log(interactedAthleteId)
+    console.log(interactingAthleteId)
+
     const matching = new Matching({
-      interactedAthleteId: interactedAthleteId,
-      interactingAthleteId: interactingAthleteId,
+      interactedUser: interactedAthleteId,
+      interactingUser: interactingAthleteId,
       status: 'ACTIVE',
     })
     await matching.save()

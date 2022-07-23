@@ -34,10 +34,12 @@ const matchingSchema = new Schema(
     interactedUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     interactingUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     status: {
       type: String,
