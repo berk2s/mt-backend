@@ -24,10 +24,12 @@ class MatchingService {
     interactedAthleteId: string,
     interactingAthleteId: string,
   ): Promise<MatchingResponse> {
-    const alreadyMatched = this.checkActiveMathces(
+    const alreadyMatched = await this.checkActiveMathces(
       interactedAthleteId,
       interactingAthleteId,
     )
+
+    console.log(alreadyMatched)
 
     if (alreadyMatched) {
       loggerService.warn(
@@ -39,6 +41,7 @@ class MatchingService {
     const matching = new Matching({
       interactedAthleteId: interactedAthleteId,
       interactingAthleteId: interactingAthleteId,
+      status: 'ACTIVE',
     })
     await matching.save()
 
@@ -58,17 +61,22 @@ class MatchingService {
         {
           interactedUser: firstUserId,
           interactigAthleteId: secondUserId,
-          status: 'ACTIVE',
         },
         {
           interactedUser: secondUserId,
           interactigAthleteId: firstUserId,
+        },
+      ],
+      $and: [
+        {
           status: 'ACTIVE',
         },
       ],
     })
 
-    return matching ? true : false
+    if (!matching) return Promise.resolve(false)
+
+    return Promise.resolve(true)
   }
 }
 

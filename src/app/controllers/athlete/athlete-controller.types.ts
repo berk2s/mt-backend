@@ -123,7 +123,9 @@ export interface InteractionResponse {
   createdAt: Date
 }
 
-export interface LikeAthleteResponse extends InteractionResponse {}
+export interface LikeAthleteResponse extends InteractionResponse {
+  matching: string
+}
 export interface DislikeAthleteResponse extends InteractionResponse {
   dislikeEndDate: Date
 }

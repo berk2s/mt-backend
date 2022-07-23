@@ -51,11 +51,3 @@ export const Matching: MatchingModel = model<MatchingDocument, MatchingModel>(
   'Matching',
   matchingSchema,
 )
-
-/**
- * Initially sets status to ACTIVE
- */
-matchingSchema.pre('save', function (next) {
-  const user = this
-  user.status = 'ACTIVE'
-})

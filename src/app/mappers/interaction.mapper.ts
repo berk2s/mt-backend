@@ -18,6 +18,7 @@ export abstract class InteractionMapper {
       userId: document.user,
       toUserId: document.toUser,
       interactionType: document.interactionType,
+      matching: document.matching,
       createdAt: document.createdAt,
     }
   }
