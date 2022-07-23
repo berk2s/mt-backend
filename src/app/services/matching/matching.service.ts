@@ -1,5 +1,5 @@
 /**
- * @module app.services.interaction
+ * @module app.services.matching
  */
 
 import { DocumentExists } from '@app/exceptions/document-exists-error'
@@ -7,7 +7,6 @@ import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { MatchingMapper } from '@app/mappers/matching.mapper'
 import { Matching, MatchingModel } from '@app/model/matching/Matching'
 import { MatchingResponse } from '@app/types/response.types'
-import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 
 /**

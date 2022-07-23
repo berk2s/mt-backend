@@ -7,6 +7,7 @@ import bodyParser from 'body-parser'
 import routes, { Routes } from './routes/routes'
 import { errorHandler } from './middlewares/error-handler'
 import cors from 'cors'
+import { rawBodySaver } from './middlewares/raw-body.middleware'
 
 /**
  * Application starter
@@ -36,8 +37,11 @@ class App {
 
     this.app.use(express.static('public'))
 
-    this.app.use(bodyParser.json({ limit: '5mb' }))
-    this.app.use(bodyParser.urlencoded({ extended: false }))
+    this.app.use(bodyParser.json({ verify: rawBodySaver, limit: '5mb' }))
+    this.app.use(
+      bodyParser.urlencoded({ verify: rawBodySaver, extended: false }),
+    )
+    this.app.use(bodyParser.raw({ verify: rawBodySaver, type: '*/*' }))
 
     this.routes.routes(this.app)
 

@@ -16,6 +16,12 @@ import userController from '@app/controllers/user/user.controller'
 import loginController from '@app/controllers/login/login.controller'
 import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
+import paymentController from '@app/controllers/subscriptions/subscription.controller'
+import {
+  CreatePremiumPackageRequest,
+  SubscribeRequest,
+} from '@app/controllers/subscriptions/subscription-controller.types'
+import bodyParser from 'body-parser'
 
 /**
  * Creates and configures routes that belongs to application
@@ -69,6 +75,36 @@ export class Routes {
     app
       .route(`${athleteController.ENDPOINT}/matching/:matchingId/unlink`)
       .put(tokenVerify, athleteController.unlinkMatching)
+
+    app
+      .route(`${paymentController.ENDPOINT}/subscribe`)
+      .post(
+        tokenVerify,
+        bodyValidation<SubscribeRequest>(SubscribeRequest),
+        paymentController.subscribe,
+      )
+
+    app
+      .route(`${paymentController.ENDPOINT}/webhook`)
+      .post(paymentController.webhook)
+
+    app
+      .route(`${paymentController.ENDPOINT}/unsubscribe`)
+      .post(
+        tokenVerify,
+        bodyValidation<SubscribeRequest>(SubscribeRequest),
+        paymentController.unsubscribe,
+      )
+
+    app
+      .route(`${paymentController.ENDPOINT}/packages/premiums`)
+      .post(
+        tokenVerify,
+        bodyValidation<CreatePremiumPackageRequest>(
+          CreatePremiumPackageRequest,
+        ),
+        paymentController.createPremiumPackage,
+      )
   }
 }
 

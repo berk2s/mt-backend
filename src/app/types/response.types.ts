@@ -22,3 +22,36 @@ export interface MatchingResponse {
   status: 'ACTIVE' | 'CLOSED'
   createdAt: Date
 }
+
+export interface SubscriptionPackageResponse {
+  id: any
+  packageName: string
+  packageDescription: string
+  period: string
+  price: number
+  currency: string
+  packageType: string
+  foreginProductId: string
+  foreginPriceId: string
+  foreginRef: string
+  createdAt: Date
+}
+
+export interface SubscriptionResponse {
+  id: any
+  userId: string
+  packageId: string
+  status: string
+  startDate: Date
+  endDate: Date
+  createdAt: Date
+}
+
+export interface CreatedSessionResponse {
+  sessionUrl: string
+}
+
+export interface PremiumPackageResponse extends SubscriptionPackageResponse {
+  likeLimit: number
+  canSeePersonalTrainers: boolean
+}
