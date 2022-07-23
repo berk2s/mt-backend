@@ -5,7 +5,11 @@
 import { Application } from 'express'
 import healthController from '@app/controllers/health/health.controller'
 import { bodyValidation } from '@app/middlewares/body-validation.middleware'
-import { RegisterAthleteRequest } from '@app/controllers/athlete/athlete-controller.types'
+import {
+  DislikeAthleteRequest,
+  LikeAthleteRequest,
+  RegisterAthleteRequest,
+} from '@app/controllers/athlete/athlete-controller.types'
 import athleteController from '@app/controllers/athlete/athlete.controller'
 import uploadMiddleware from '@app/middlewares/image-upload.middleware'
 import userController from '@app/controllers/user/user.controller'
@@ -45,6 +49,26 @@ export class Routes {
         bodyValidation<RegisterAthleteRequest>(RegisterAthleteRequest),
         athleteController.registerUser,
       )
+
+    app
+      .route(`${athleteController.ENDPOINT}/likes`)
+      .post(
+        tokenVerify,
+        bodyValidation<LikeAthleteRequest>(LikeAthleteRequest),
+        athleteController.likeAthlete,
+      )
+
+    app
+      .route(`${athleteController.ENDPOINT}/dislikes`)
+      .post(
+        tokenVerify,
+        bodyValidation<DislikeAthleteRequest>(DislikeAthleteRequest),
+        athleteController.dislikeAthlete,
+      )
+
+    app
+      .route(`${athleteController.ENDPOINT}/matching/:matchingId/unlink`)
+      .put(tokenVerify, athleteController.unlinkMatching)
   }
 }
 

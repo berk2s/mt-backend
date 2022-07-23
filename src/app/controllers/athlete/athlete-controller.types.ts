@@ -8,7 +8,9 @@ import {
   IsEmail,
   IsEnum,
   Length,
+  Validate,
 } from 'class-validator'
+import { ObjectIdValidator } from '@app/validation/ObjectIdValidator'
 
 /**
  * Register User DTO
@@ -90,3 +92,42 @@ export class RegisterAthleteRequest extends BodyDTO {
   @Expose()
   trainingExperience?: Experience
 }
+
+export class LikeAthleteRequest extends BodyDTO {
+  @IsDefined({
+    message: 'userId.empty',
+  })
+  @Validate(ObjectIdValidator, {
+    message: 'userId.invalid',
+  })
+  @Expose()
+  likedUserId: string
+}
+
+export class DislikeAthleteRequest extends BodyDTO {
+  @IsDefined({
+    message: 'userId.empty',
+  })
+  @Validate(ObjectIdValidator, {
+    message: 'userId.invalid',
+  })
+  @Expose()
+  dislikedUserId: string
+}
+
+export interface InteractionResponse {
+  id?: any
+  userId: string
+  toUserId: string
+  interactionType: 'LIKED' | 'DISLIKED'
+  createdAt: Date
+}
+
+export interface LikeAthleteResponse extends InteractionResponse {
+  matching: string
+}
+export interface DislikeAthleteResponse extends InteractionResponse {
+  dislikeEndDate: Date
+}
+
+export class UnlinkMatchingRequest extends BodyDTO {}

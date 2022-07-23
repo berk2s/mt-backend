@@ -1,4 +1,3 @@
-import { BaseUserDocument } from '@app/model/user/BaseUser'
 import { Experience, Gender, WorkoutDays } from './enums'
 
 /**
@@ -14,4 +13,12 @@ export interface UserResponse {
   workoutDays?: WorkoutDays[]
   experience?: Experience
   imageUrl?: string
+}
+
+export interface MatchingResponse {
+  id: any
+  interactedUserId: string
+  interactingUserId: string
+  status: 'ACTIVE' | 'CLOSED'
+  createdAt: Date
 }
