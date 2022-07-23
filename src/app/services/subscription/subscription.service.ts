@@ -32,19 +32,21 @@ class SubscriptionService {
    */
   public async subscribe(
     athleteId: string,
-    packageName: string,
+    foreginRef: string,
     foreginId: string,
   ): Promise<SubscriptionResponse> {
     await this.checkUserExists(athleteId)
-    await this.checkForeginIdExist(foreginId)
+    const foreginSubscription = await this.getForeginSubscription(foreginId)
 
-    const subscriptionPackage = await subscriptionPackageService.getByName(
-      packageName,
+    const subscriptionPackage = await subscriptionPackageService.getByForeginRef(
+      foreginRef,
     )
 
     const now = new Date()
     const endDate = new Date()
-    endDate.setSeconds(endDate.getSeconds() + subscriptionPackage.period)
+    endDate.setSeconds(
+      endDate.getSeconds() + foreginSubscription.current_period_end,
+    )
 
     const subscription = new Subscription({
       foreginId: foreginId,
@@ -57,7 +59,7 @@ class SubscriptionService {
     await subscription.save()
 
     loggerService.info(
-      `The Athlete subscribed to a package [userId: ${athleteId}, packageId: ${packageName}]`,
+      `The Athlete subscribed to a package [userId: ${athleteId}, packageId: ${foreginRef}]`,
     )
 
     return Promise.resolve(SubscriptionMapper.subscribeToDTO(subscription))
@@ -68,15 +70,15 @@ class SubscriptionService {
    */
   public async unsubscribe(
     athleteId: string,
-    packageName: string,
+    foreginKey: string,
   ): Promise<SubscriptionResponse> {
     const foreginSubscription = await stripeService.getSubscriptionByAthleteAndProduct(
       athleteId,
-      packageName,
+      foreginKey,
     )
 
-    const subscriptionPackage = await subscriptionPackageService.getByName(
-      packageName,
+    const subscriptionPackage = await subscriptionPackageService.getByForeginRef(
+      foreginKey,
     )
 
     const subscription = await Subscription.findOne({
@@ -88,12 +90,25 @@ class SubscriptionService {
     if (foreginSubscription)
       await stripeService.unsubscribe(foreginSubscription.id)
 
-    subscription.status = 'INACTIVE'
-    await subscription.save()
+    if (subscription) {
+      subscription.status = 'INACTIVE'
+      await subscription.save()
+    }
 
-    loggerService.info('The Athlete unsubscribed a package')
+    loggerService.info(
+      'The Athlete unsubscribed a package [athleteId: ${athleteId}, foreginKey: ${foreginKey}]',
+    )
 
-    return Promise.resolve(SubscriptionMapper.subscribeToDTO(subscription))
+    if (!subscription && !foreginSubscription) {
+      loggerService.warn(
+        `Subscription couldn't found [athleteId: ${athleteId}, foreginKey: ${foreginKey}]`,
+      )
+      throw new DocumentNotFound('subscription.notFound')
+    }
+
+    return Promise.resolve(
+      subscription ? SubscriptionMapper.subscribeToDTO(subscription) : null,
+    )
   }
 
   private async checkUserExists(userId: string) {
@@ -107,7 +122,7 @@ class SubscriptionService {
     }
   }
 
-  private async checkForeginIdExist(foreginId: string) {
+  private async getForeginSubscription(foreginId: string) {
     const doesForeginIdExists = await stripeService.getSubscriptionById(
       foreginId,
     )
@@ -117,7 +132,7 @@ class SubscriptionService {
       throw new StripeError('subscription.notFound')
     }
 
-    return doesForeginIdExists ? true : false
+    return doesForeginIdExists
   }
 }
 

@@ -3,10 +3,12 @@
  */
 
 import stripeService from '@app/services/stripe/stripe.service'
+import subscriptionPackageService from '@app/services/subscription/subscription-package.service'
 import subscriptionService from '@app/services/subscription/subscription.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
 import {
+  CreatePremiumPackageRequest,
   SubscribeRequest,
   UnsubscribeRequest,
   WebhookRequest,
@@ -30,7 +32,7 @@ class SubscriptionController {
   ) {
     try {
       const { userId, userEmail } = req
-      const { packageName: lookUpKey } = req.bodyDto
+      const { foreginRef: lookUpKey } = req.bodyDto
 
       const createdSession = await stripeService.createSession(
         userId,
@@ -74,14 +76,33 @@ class SubscriptionController {
   ) {
     try {
       const { userId } = req
-      const { packageName } = req.bodyDto
+      const { foreginRef } = req.bodyDto
 
       const subscription = await subscriptionService.unsubscribe(
         userId,
-        packageName,
+        foreginRef,
       )
 
       res.status(200).send(subscription)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handlres create premium request
+   */
+  public async createPremiumPackage(
+    req: IncomingRequest<CreatePremiumPackageRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const premiumPackage = await subscriptionPackageService.createPremiumPackage(
+        req.bodyDto,
+      )
+
+      return res.status(201).json(premiumPackage)
     } catch (err) {
       next(err)
     }

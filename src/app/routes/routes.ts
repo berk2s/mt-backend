@@ -17,7 +17,10 @@ import loginController from '@app/controllers/login/login.controller'
 import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
 import paymentController from '@app/controllers/subscriptions/subscription.controller'
-import { SubscribeRequest } from '@app/controllers/subscriptions/subscription-controller.types'
+import {
+  CreatePremiumPackageRequest,
+  SubscribeRequest,
+} from '@app/controllers/subscriptions/subscription-controller.types'
 import bodyParser from 'body-parser'
 
 /**
@@ -91,6 +94,16 @@ export class Routes {
         tokenVerify,
         bodyValidation<SubscribeRequest>(SubscribeRequest),
         paymentController.unsubscribe,
+      )
+
+    app
+      .route(`${paymentController.ENDPOINT}/packages/premiums`)
+      .post(
+        tokenVerify,
+        bodyValidation<CreatePremiumPackageRequest>(
+          CreatePremiumPackageRequest,
+        ),
+        paymentController.createPremiumPackage,
       )
   }
 }

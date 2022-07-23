@@ -26,9 +26,14 @@ export interface MatchingResponse {
 export interface SubscriptionPackageResponse {
   id: any
   packageName: string
-  period: number
-  likeLimit: number
-  canSeePersonalTrainers: boolean
+  packageDescription: string
+  period: string
+  price: number
+  currency: string
+  packageType: string
+  foreginProductId: string
+  foreginPriceId: string
+  foreginRef: string
   createdAt: Date
 }
 
@@ -44,4 +49,9 @@ export interface SubscriptionResponse {
 
 export interface CreatedSessionResponse {
   sessionUrl: string
+}
+
+export interface PremiumPackageResponse extends SubscriptionPackageResponse {
+  likeLimit: number
+  canSeePersonalTrainers: boolean
 }

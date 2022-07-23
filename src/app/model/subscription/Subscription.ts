@@ -31,7 +31,7 @@ export const subscriptionOptions: SchemaOptions = {
 const subscriptionSchema = new Schema(
   {
     foreginId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     user: {

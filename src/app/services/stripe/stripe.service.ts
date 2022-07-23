@@ -6,8 +6,10 @@ import stripeConfig from '@app/config/stripke.config'
 import { StripeError } from '@app/exceptions/stripe-error'
 import { CreatedSessionResponse } from '@app/types/response.types'
 import Stripe from 'stripe'
+import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import subscriptionService from '../subscription/subscription.service'
+import { CreatePrice } from './stripe.types'
 
 /**
  * Stripe service
@@ -92,7 +94,7 @@ class StripeService {
 
     if (prices.data && prices.data.length === 0) {
       loggerService.warn(
-        `Price with the given look up ket doesn't exists [lookUpKey: ${lookUpKey}]`,
+        `Price with the given look up key doesn't exists [lookUpKey: ${lookUpKey}]`,
       )
       throw new StripeError('lookUpKey.notFound')
     }
@@ -185,11 +187,11 @@ class StripeService {
     try {
       subscription = await this.stripe.subscriptions.search({
         query:
-          "status:'active' AND metadata['athleteId']:'" +
+          'status:"active" AND metadata["athleteId"]:"' +
           athleteId +
-          "' AND metadata['lookupKey']:'" +
+          '" AND metadata["lookupKey"]:"' +
           lookUpKey +
-          "'",
+          '"',
       })
     } catch (err) {
       loggerService.warn(
@@ -210,9 +212,7 @@ class StripeService {
     let subscription
 
     try {
-      subscription = await this.stripe.subscriptions.search({
-        query: "status:'active' AND id:'" + subscriptionId + "'",
-      })
+      subscription = await this.stripe.subscriptions.retrieve(subscriptionId)
     } catch (err) {
       loggerService.warn(
         `Something went wrong while getting Stripe subscription by subscription id [subscriptionId: ${subscriptionId}, err: ${err}]`,
@@ -220,9 +220,9 @@ class StripeService {
       throw new StripeError('subscription.error')
     }
 
-    if (subscription.data && subscription.data.length === 0) return null
+    if (!subscription) return null
 
-    return subscription.data[0]
+    return subscription
   }
 
   /**
@@ -236,6 +236,48 @@ class StripeService {
         `Something went wrong while Stripe unsubscribing [subscriptionId: ${subscriptionId}, err: ${err}]`,
       )
       throw new StripeError('subscription.error')
+    }
+  }
+
+  /**
+   * Creates product
+   */
+  public async createProduct(productName: string) {
+    try {
+      const product = await this.stripe.products.create({
+        name: productName,
+      })
+
+      loggerService.info(`A Stripe product created [productId: ${product.id}]`)
+
+      return product
+    } catch (err) {
+      loggerService.warn(
+        `Something went wrong while creating Stripe product [productName: ${productName}, error: ${err}]`,
+      )
+      throw new StripeError('creatingProduct.error')
+    }
+  }
+
+  /**
+   * Creates Price
+   */
+  public async createPrice(createPrice: CreatePrice) {
+    try {
+      const price = await this.stripe.prices.create({
+        ...createPrice,
+      })
+
+      loggerService.info(`A Stripe price created [priceId: ${price.id}]`)
+
+      return price
+    } catch (err) {
+      loggerService.warn(
+        `Something went wrong while creating price [price: ${JSON.stringify(
+          createPrice,
+        )}, error: ${err}]`,
+      )
+      throw new StripeError('creatingPrice.error')
     }
   }
 
