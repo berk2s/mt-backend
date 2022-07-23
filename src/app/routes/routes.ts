@@ -84,6 +84,14 @@ export class Routes {
     app
       .route(`${paymentController.ENDPOINT}/webhook`)
       .post(paymentController.webhook)
+
+    app
+      .route(`${paymentController.ENDPOINT}/unsubscribe`)
+      .post(
+        tokenVerify,
+        bodyValidation<SubscribeRequest>(SubscribeRequest),
+        paymentController.unsubscribe,
+      )
   }
 }
 

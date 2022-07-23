@@ -4,10 +4,18 @@ import { IsDefined } from 'class-validator'
 
 export class SubscribeRequest extends BodyDTO {
   @IsDefined({
-    message: 'lookUpKey.empty',
+    message: 'packageName.empty',
   })
   @Expose()
-  lookUpKey: string
+  packageName: string
 }
 
 export class WebhookRequest extends BodyDTO {}
+
+export class UnsubscribeRequest extends BodyDTO {
+  @IsDefined({
+    message: 'packageName.empty',
+  })
+  @Expose()
+  packageName: string
+}

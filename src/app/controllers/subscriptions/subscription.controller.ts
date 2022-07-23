@@ -3,10 +3,12 @@
  */
 
 import stripeService from '@app/services/stripe/stripe.service'
+import subscriptionService from '@app/services/subscription/subscription.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
 import {
   SubscribeRequest,
+  UnsubscribeRequest,
   WebhookRequest,
 } from './subscription-controller.types'
 
@@ -28,7 +30,7 @@ class SubscriptionController {
   ) {
     try {
       const { userId, userEmail } = req
-      const { lookUpKey } = req.bodyDto
+      const { packageName: lookUpKey } = req.bodyDto
 
       const createdSession = await stripeService.createSession(
         userId,
@@ -57,6 +59,29 @@ class SubscriptionController {
       await stripeService.webhook(rawBody, signature)
 
       res.send()
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles unsubscribe request
+   */
+  public async unsubscribe(
+    req: IncomingRequest<UnsubscribeRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+      const { packageName } = req.bodyDto
+
+      const subscription = await subscriptionService.unsubscribe(
+        userId,
+        packageName,
+      )
+
+      res.status(200).send(subscription)
     } catch (err) {
       next(err)
     }

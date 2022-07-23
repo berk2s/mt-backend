@@ -69,7 +69,7 @@ class SubscriptionService {
   public async unsubscribe(
     athleteId: string,
     packageName: string,
-  ): Promise<void> {
+  ): Promise<SubscriptionResponse> {
     const foreginSubscription = await stripeService.getSubscriptionByAthleteAndProduct(
       athleteId,
       packageName,
@@ -90,6 +90,10 @@ class SubscriptionService {
 
     subscription.status = 'INACTIVE'
     await subscription.save()
+
+    loggerService.info('The Athlete unsubscribed a package')
+
+    return Promise.resolve(SubscriptionMapper.subscribeToDTO(subscription))
   }
 
   private async checkUserExists(userId: string) {
