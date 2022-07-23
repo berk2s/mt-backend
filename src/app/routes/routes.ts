@@ -65,6 +65,10 @@ export class Routes {
         bodyValidation<DislikeAthleteRequest>(DislikeAthleteRequest),
         athleteController.dislikeAthlete,
       )
+
+    app
+      .route(`${athleteController.ENDPOINT}/matching/:matchingId/unlink`)
+      .put(tokenVerify, athleteController.unlinkMatching)
   }
 }
 

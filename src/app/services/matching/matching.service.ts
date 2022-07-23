@@ -3,9 +3,11 @@
  */
 
 import { DocumentExists } from '@app/exceptions/document-exists-error'
+import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { MatchingMapper } from '@app/mappers/matching.mapper'
 import { Matching, MatchingModel } from '@app/model/matching/Matching'
 import { MatchingResponse } from '@app/types/response.types'
+import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 
 /**
@@ -45,6 +47,43 @@ class MatchingService {
 
     loggerService.info(
       `Athletes are succesfully matched [interactedAthleteId: ${interactedAthleteId}, interactingAthleteId: ${interactingAthleteId}]`,
+    )
+
+    return Promise.resolve(MatchingMapper.matchingToDTO(matching))
+  }
+
+  public async unlink(
+    userId: string,
+    matchingId: string,
+  ): Promise<MatchingResponse> {
+    const matching = await this.matching.findOne({
+      $or: [
+        {
+          interactedUser: userId,
+        },
+        {
+          interactingUser: userId,
+        },
+      ],
+      $and: [
+        {
+          _id: matchingId,
+        },
+      ],
+    })
+
+    if (!matching) {
+      loggerService.warn(
+        `Matching with given ID doesn't exists [matchingId: ${matchingId}]`,
+      )
+      throw new DocumentNotFound('matching.notFound')
+    }
+
+    matching.status = 'CLOSED'
+    await matching.save()
+
+    loggerService.info(
+      `The Athlete unlinked the matching [athleteId: ${userId}, matchingId: ${matchingId}]`,
     )
 
     return Promise.resolve(MatchingMapper.matchingToDTO(matching))

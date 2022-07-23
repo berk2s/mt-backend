@@ -129,3 +129,5 @@ export interface LikeAthleteResponse extends InteractionResponse {
 export interface DislikeAthleteResponse extends InteractionResponse {
   dislikeEndDate: Date
 }
+
+export class UnlinkMatchingRequest extends BodyDTO {}
