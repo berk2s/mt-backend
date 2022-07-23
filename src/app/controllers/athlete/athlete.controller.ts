@@ -6,7 +6,7 @@ import interactionService from '@app/services/interaction/interaction.service'
 import matchingService from '@app/services/matching/matching.service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Response } from 'express'
 import {
   DislikeAthleteRequest,
   LikeAthleteRequest,

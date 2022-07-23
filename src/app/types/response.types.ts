@@ -22,3 +22,22 @@ export interface MatchingResponse {
   status: 'ACTIVE' | 'CLOSED'
   createdAt: Date
 }
+
+export interface SubscriptionPackageResponse {
+  id: any
+  packageName: string
+  period: number
+  likeLimit: number
+  canSeePersonalTrainers: boolean
+  createdAt: Date
+}
+
+export interface SubscriptionResponse {
+  id: any
+  userId: string
+  packageId: string
+  status: string
+  startDate: Date
+  endDate: Date
+  createdAt: Date
+}
