@@ -16,8 +16,8 @@ import userController from '@app/controllers/user/user.controller'
 import loginController from '@app/controllers/login/login.controller'
 import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
-import subscriptionController from '@app/controllers/subscription/subscription.controller'
-import { SubscribeRequest } from '@app/controllers/subscription/subscription-controller.types'
+import paymentController from '@app/controllers/payment/payment.controller'
+import { SubscribePaymentRequest } from '@app/controllers/payment/payment-controller.types'
 
 /**
  * Creates and configures routes that belongs to application
@@ -73,11 +73,11 @@ export class Routes {
       .put(tokenVerify, athleteController.unlinkMatching)
 
     app
-      .route(`${subscriptionController.ENDPOINT}/subscribe`)
+      .route(`${paymentController.ENDPOINT}/subscribe`)
       .post(
         tokenVerify,
-        bodyValidation<SubscribeRequest>(SubscribeRequest),
-        subscriptionController.subscribe,
+        bodyValidation<SubscribePaymentRequest>(SubscribePaymentRequest),
+        paymentController.subscribe,
       )
   }
 }
