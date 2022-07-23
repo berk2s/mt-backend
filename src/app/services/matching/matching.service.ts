@@ -38,9 +38,6 @@ class MatchingService {
       throw new DocumentExists('matching.exists')
     }
 
-    console.log(interactedAthleteId)
-    console.log(interactingAthleteId)
-
     const matching = new Matching({
       interactedUser: interactedAthleteId,
       interactingUser: interactingAthleteId,
