@@ -1,28 +1,28 @@
 /**
- * @module app.controller.payment
+ * @module app.controller.subscription
  */
 
 import stripeService from '@app/services/stripe/stripe.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Response } from 'express'
 import {
-  SubscribePaymentRequest,
+  SubscribeRequest,
   WebhookRequest,
-} from './payment-controller.types'
+} from './subscription-controller.types'
 
 /**
- * Payment Controller
+ * Subscription Controller
  * @class
- * @alias app.controller.payment.PaymentController
+ * @alias app.controller.subscription.SubscriptionController
  */
-class PaymentController {
-  public readonly ENDPOINT: string = '/payments'
+class SubscriptionController {
+  public readonly ENDPOINT: string = '/subscriptions'
 
   /**
-   * Handles subscribe payment request
+   * Handles subscribe request
    */
   public async subscribe(
-    req: IncomingRequest<SubscribePaymentRequest>,
+    req: IncomingRequest<SubscribeRequest>,
     res: Response,
     next: NextFunction,
   ) {
@@ -63,4 +63,4 @@ class PaymentController {
   }
 }
 
-export default new PaymentController()
+export default new SubscriptionController()

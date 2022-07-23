@@ -16,8 +16,8 @@ import userController from '@app/controllers/user/user.controller'
 import loginController from '@app/controllers/login/login.controller'
 import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
-import paymentController from '@app/controllers/payment/payment.controller'
-import { SubscribePaymentRequest } from '@app/controllers/payment/payment-controller.types'
+import paymentController from '@app/controllers/subscriptions/subscription.controller'
+import { SubscribeRequest } from '@app/controllers/subscriptions/subscription-controller.types'
 import bodyParser from 'body-parser'
 
 /**
@@ -77,7 +77,7 @@ export class Routes {
       .route(`${paymentController.ENDPOINT}/subscribe`)
       .post(
         tokenVerify,
-        bodyValidation<SubscribePaymentRequest>(SubscribePaymentRequest),
+        bodyValidation<SubscribeRequest>(SubscribeRequest),
         paymentController.subscribe,
       )
 

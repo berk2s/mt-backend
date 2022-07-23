@@ -2,7 +2,7 @@ import { BodyDTO } from '@app/types/controller.types'
 import { Expose } from 'class-transformer'
 import { IsDefined } from 'class-validator'
 
-export class SubscribePaymentRequest extends BodyDTO {
+export class SubscribeRequest extends BodyDTO {
   @IsDefined({
     message: 'lookUpKey.empty',
   })
