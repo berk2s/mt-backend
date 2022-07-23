@@ -131,5 +131,3 @@ export interface DislikeAthleteResponse extends InteractionResponse {
 }
 
 export class UnlinkMatchingRequest extends BodyDTO {}
-
-export class SubscribeRequest extends BodyDTO {}

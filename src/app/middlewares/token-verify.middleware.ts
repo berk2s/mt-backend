@@ -37,6 +37,7 @@ export const tokenVerify = async (
   try {
     const decoded: any = jwtService.verify(token)
     req.userId = decoded.userId
+    req.userEmail = decoded.userEmail
   } catch (err) {
     loggerService.warn('Access token is not valid')
     sendErrorResponse(res)

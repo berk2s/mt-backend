@@ -27,4 +27,5 @@ export enum ErrorTypes {
   NOT_FOUND = 'not_found',
   BAD_CREDENTIALS = 'bad_credentials',
   INVALID_GRANT = 'invalid_grant',
+  PAYMENT_ERROR = 'payment_error',
 }

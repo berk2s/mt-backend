@@ -12,6 +12,7 @@ export abstract class TokenUtility {
       userId: user._id,
       fullName: user.fullName,
       userType: user.userType,
+      userEmail: user.email,
     }
   }
 

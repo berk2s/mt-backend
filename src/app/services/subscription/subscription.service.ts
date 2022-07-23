@@ -9,7 +9,6 @@ import {
   SubscriptionModel,
 } from '@app/model/subscription/Subscription'
 import { SubscriptionResponse } from '@app/types/response.types'
-import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import userService from '../user/user.service'
 import subscriptionPackageService from './subscription-package.service'

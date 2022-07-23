@@ -41,3 +41,7 @@ export interface SubscriptionResponse {
   endDate: Date
   createdAt: Date
 }
+
+export interface CreatedSessionResponse {
+  sessionUrl: string
+}
