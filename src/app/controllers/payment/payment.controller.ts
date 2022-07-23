@@ -4,8 +4,11 @@
 
 import stripeService from '@app/services/stripe/stripe.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Response } from 'express'
-import { SubscribePaymentRequest } from './payment-controller.types'
+import { NextFunction, Request, Response } from 'express'
+import {
+  SubscribePaymentRequest,
+  WebhookRequest,
+} from './payment-controller.types'
 
 /**
  * Payment Controller
@@ -34,6 +37,26 @@ class PaymentController {
       )
 
       res.status(200).json(createdSession)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles webhook request that comes from Stripe
+   */
+  public async webhook(
+    req: IncomingRequest<WebhookRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const rawBody = req.rawBody
+      const signature = req.headers['stripe-signature']
+
+      await stripeService.webhook(rawBody, signature)
+
+      res.send()
     } catch (err) {
       next(err)
     }

@@ -18,6 +18,7 @@ import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
 import paymentController from '@app/controllers/payment/payment.controller'
 import { SubscribePaymentRequest } from '@app/controllers/payment/payment-controller.types'
+import bodyParser from 'body-parser'
 
 /**
  * Creates and configures routes that belongs to application
@@ -79,6 +80,10 @@ export class Routes {
         bodyValidation<SubscribePaymentRequest>(SubscribePaymentRequest),
         paymentController.subscribe,
       )
+
+    app
+      .route(`${paymentController.ENDPOINT}/webhook`)
+      .post(paymentController.webhook)
   }
 }
 

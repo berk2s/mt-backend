@@ -9,3 +9,5 @@ export class SubscribePaymentRequest extends BodyDTO {
   @Expose()
   lookUpKey: string
 }
+
+export class WebhookRequest extends BodyDTO {}
