@@ -16,7 +16,6 @@ import {
 } from '@app/model/interaction/BaseInteraction'
 import { DislikedInteraction } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteraction } from '@app/model/interaction/LikedInteraction'
-import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import userService from '../user/user.service'
 
