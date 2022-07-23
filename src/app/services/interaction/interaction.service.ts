@@ -157,7 +157,7 @@ class InteractionService {
       interactionType: 'LIKED',
     })
 
-    return isInteractedBefore
+    return Promise.resolve(isInteractedBefore ? true : false)
   }
 }
 
