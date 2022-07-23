@@ -9,9 +9,19 @@ import {
   baseInteractionOptions,
 } from './BaseInteraction'
 
-export interface LikedInteractionDocument extends BaseInteractionDocument {}
+export interface LikedInteractionDocument extends BaseInteractionDocument {
+  matching?: string
+}
 
-const likedInteractionSchema = new Schema({}, baseInteractionOptions)
+const likedInteractionSchema = new Schema(
+  {
+    matching: {
+      type: Schema.Types.ObjectId,
+      ref: 'Matching',
+    },
+  },
+  baseInteractionOptions,
+)
 
 export const LikedInteraction = BaseInteraction.discriminator<
   LikedInteractionDocument

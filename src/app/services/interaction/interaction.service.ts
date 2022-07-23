@@ -17,6 +17,7 @@ import {
 import { DislikedInteraction } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteraction } from '@app/model/interaction/LikedInteraction'
 import loggerService from '../logger/logger-service'
+import matchingService from '../matching/matching.service'
 import userService from '../user/user.service'
 
 /**
@@ -45,6 +46,13 @@ class InteractionService {
       user: userId,
       toUser: likedUserId,
     })
+
+    const areMatching = await this.checkMatching(userId, likedUserId)
+
+    if (areMatching) {
+      const createdMatching = await matchingService.match(likedUserId, userId)
+      likedInteraction.matching = createdMatching.id
+    }
 
     await likedInteraction.save()
 
@@ -137,6 +145,19 @@ class InteractionService {
       )
       throw new DocumentExists(`${interactionType.toLowerCase()}.before`)
     }
+  }
+
+  private async checkMatching(
+    userId: string,
+    likedUserId: string,
+  ): Promise<boolean> {
+    const isInteractedBefore = await this.baseInteraction.exists({
+      user: likedUserId,
+      toUser: userId,
+      interactionType: 'LIKED',
+    })
+
+    return isInteractedBefore
   }
 }
 

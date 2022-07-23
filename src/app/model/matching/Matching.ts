@@ -11,6 +11,10 @@ import {
   SchemaOptions,
 } from 'mongoose'
 
+/**
+ * interactedUser is the Athlete that liked first
+ * interactingUser is the Athlete that liked last
+ */
 export interface MatchingDocument extends Document {
   _id?: ObjectId
   interactedUser: string
