@@ -29,8 +29,6 @@ class MatchingService {
       interactingAthleteId,
     )
 
-    console.log(alreadyMatched)
-
     if (alreadyMatched) {
       loggerService.warn(
         `Athletes are already matched [interactedAthleteId: ${interactedAthleteId}, interactingAthleteId: ${interactingAthleteId}]`,
