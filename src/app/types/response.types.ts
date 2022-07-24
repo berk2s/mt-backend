@@ -79,3 +79,8 @@ export interface GymResponse {
   id?: any
   name?: string
 }
+
+export interface AthleteResponse extends UserResponse {
+  trainingExperience: any
+  trainingDays: any
+}

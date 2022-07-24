@@ -11,6 +11,7 @@ import { Request, Response } from 'express'
 import {
   UpdateGymRequest,
   UpdateProfilePhotoRequest,
+  UserInfoRequest,
 } from './user-controller.types'
 /**
  * User Controller
@@ -18,7 +19,7 @@ import {
  * @alias app.controller.userController.UserController
  */
 class UserController {
-  public readonly ENDPOINT: string = '/user'
+  public readonly ENDPOINT: string = '/users'
 
   /**
    * Handles update profile photo request

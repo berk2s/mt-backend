@@ -9,10 +9,10 @@ import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UserMapper } from '@app/mappers/user.mapper'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
-import { UserResponse } from '@app/types/response.types'
+import { AthleteResponse, UserResponse } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { TokenUtility } from '@app/utilities/token-utility'
-import { ObjectId } from 'mongoose'
+import { Model, ObjectId } from 'mongoose'
 import { loggers } from 'winston'
 import gymService from '../gym/gym.service'
 import imageService from '../image/image.service'
@@ -26,9 +26,11 @@ import loggerService from '../logger/logger-service'
  */
 class UserService {
   private baseUserModel: BaseUserModel
+  private athleteModel: Model<any>
 
   constructor() {
     this.baseUserModel = BaseUser
+    this.athleteModel = AthleteUser
   }
 
   /**
@@ -143,6 +145,22 @@ class UserService {
     )
 
     return Promise.resolve(UserMapper.baseUsertoDTO(user))
+  }
+
+  /**
+   * Gets the athlete by athlete id
+   */
+  public async getAthleteById(athleteId: string): Promise<AthleteResponse> {
+    const user = await this.athleteModel.findById(athleteId)
+
+    if (!user) {
+      loggerService.warn(
+        `Athlete with the given id doesn't exits [userId: ${athleteId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
+
+    return Promise.resolve(UserMapper.athleteToDTO(user))
   }
 
   private async checkGymExists(gymId: string) {

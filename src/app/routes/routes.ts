@@ -129,6 +129,10 @@ export class Routes {
     app
       .route(`${userController.ENDPOINT}/gyms/:gymId`)
       .put(tokenVerify, userController.updateGym)
+
+    app
+      .route(`${athleteController.ENDPOINT}/me`)
+      .get(tokenVerify, athleteController.getUserInfo)
   }
 }
 

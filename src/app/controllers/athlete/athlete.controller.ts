@@ -7,6 +7,7 @@ import matchingService from '@app/services/matching/matching.service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
+import { UserInfoRequest } from '../user/user-controller.types'
 import {
   DislikeAthleteRequest,
   LikeAthleteRequest,
@@ -20,7 +21,7 @@ import {
  * @alias app.controller.athleteController.AthleteController
  */
 class AthleteController {
-  public readonly ENDPOINT: string = '/user/athlete'
+  public readonly ENDPOINT: string = '/users/athletes'
 
   /**
    * Handles register athlete post request
@@ -97,6 +98,24 @@ class AthleteController {
       const unlinkedMatching = await matchingService.unlink(userId, matchingId)
 
       res.status(200).send(unlinkedMatching)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles get user info request
+   */
+  public async getUserInfo(
+    req: IncomingRequest<UserInfoRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+      const user = await userService.getAthleteById(userId)
+
+      return res.status(200).json(user)
     } catch (err) {
       next(err)
     }

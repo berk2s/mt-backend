@@ -5,3 +5,5 @@ export interface UpdateProfilePhotoRequest extends BodyDTO {
 }
 
 export class UpdateGymRequest extends BodyDTO {}
+
+export class UserInfoRequest extends BodyDTO {}
