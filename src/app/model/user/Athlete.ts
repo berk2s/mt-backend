@@ -12,7 +12,7 @@ export interface AthleteUserDocument extends BaseUserDocument {
 }
 
 const athleteUserSchema = new Schema({
-   trainingExperience: { type: Array<String>, required: true },
+   trainingExperience: { type: String, required: true },
    trainingDays: { type: Array<String>, required: true}
 }, userSchemaOptions)
  

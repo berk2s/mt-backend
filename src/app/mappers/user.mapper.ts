@@ -30,7 +30,6 @@ export abstract class UserMapper {
       gender: user.sex,
       languages: user.languages,
       workoutDays: user.trainingDays,
-      experience: user.trainingExperience,
       gym: user.gym,
       trainingExperience: user.trainingExperience,
       trainingDays: user.trainingDays,
