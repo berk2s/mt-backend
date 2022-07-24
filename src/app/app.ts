@@ -37,11 +37,7 @@ class App {
 
     this.app.use(express.static('public'))
 
-    this.app.use(bodyParser.json({ verify: rawBodySaver, limit: '5mb' }))
-    this.app.use(
-      bodyParser.urlencoded({ verify: rawBodySaver, extended: false }),
-    )
-    this.app.use(bodyParser.raw({ verify: rawBodySaver, type: '*/*' }))
+    this.app.use(bodyParser.json({ verify: rawBodySaver, limit: '50mb' }))
 
     this.routes.routes(this.app)
 

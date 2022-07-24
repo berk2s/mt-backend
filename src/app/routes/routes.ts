@@ -46,7 +46,7 @@ export class Routes {
       .post(bodyValidation<LoginRequest>(LoginRequest), loginController.login)
 
     app
-      .route(`${userController.ENDPOINT}/avatar/:userId`)
+      .route(`${userController.ENDPOINT}/avatar`)
       .put(
         tokenVerify,
         uploadMiddleware.single('profileImage'),

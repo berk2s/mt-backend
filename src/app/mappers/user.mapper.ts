@@ -3,7 +3,7 @@
  */
 
 import { BaseUserDocument } from '@app/model/user/BaseUser'
-import { AthleteUser, AthleteUserDocument } from '@app/model/user/Athlete'
+import { AthleteUserDocument } from '@app/model/user/Athlete'
 import { AthleteResponse, UserResponse } from '@app/types/response.types'
 
 export abstract class UserMapper {

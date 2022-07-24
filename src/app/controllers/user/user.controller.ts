@@ -35,7 +35,7 @@ class UserController {
         throw new InvalidRequest('profileImage.empty')
       }
 
-      const { userId } = req.params
+      const { userId } = req
 
       const updatedUser = await userService.updateProfilePhoto(
         userId,
