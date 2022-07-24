@@ -88,6 +88,20 @@ class ChatService {
     return Promise.resolve(ChatMapper.messageToDTO(message))
   }
 
+  /**
+   * Closes the chat room
+   */
+  public async closeChat(chatId: string): Promise<ChatResponse> {
+    const chat = await this.getChatById(chatId)
+
+    chat.status = 'CLOSED'
+    chat.save()
+
+    loggerService.info(`The Chat room closed [chatId: ${chatId}]`)
+
+    return Promise.resolve(ChatMapper.chatToDTO(chat))
+  }
+
   private async checkParticipantIds(participantIds: string[]) {
     participantIds.forEach(async (participantId) => {
       const doesUserExists = await userService.existsById(participantId)

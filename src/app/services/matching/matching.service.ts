@@ -22,6 +22,9 @@ class MatchingService {
     this.matching = Matching
   }
 
+  /**
+   * Creates a mathcing between two athlete
+   */
   public async match(
     interactedAthleteId: string,
     interactingAthleteId: string,
@@ -58,6 +61,9 @@ class MatchingService {
     return Promise.resolve(MatchingMapper.matchingToDTO(matching))
   }
 
+  /**
+   * Removes matching between the athletes
+   */
   public async unlink(
     userId: string,
     matchingId: string,
@@ -87,6 +93,8 @@ class MatchingService {
 
     matching.status = 'CLOSED'
     await matching.save()
+
+    await chatService.closeChat(matching.chat)
 
     loggerService.info(
       `The Athlete unlinked the matching [athleteId: ${userId}, matchingId: ${matchingId}]`,
