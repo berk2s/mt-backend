@@ -7,6 +7,7 @@ import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { MatchingMapper } from '@app/mappers/matching.mapper'
 import { Matching, MatchingModel } from '@app/model/matching/Matching'
 import { MatchingResponse } from '@app/types/response.types'
+import chatService from '../chat/chat.service'
 import loggerService from '../logger/logger-service'
 
 /**
@@ -21,6 +22,9 @@ class MatchingService {
     this.matching = Matching
   }
 
+  /**
+   * Creates a mathcing between two athlete
+   */
   public async match(
     interactedAthleteId: string,
     interactingAthleteId: string,
@@ -37,9 +41,15 @@ class MatchingService {
       throw new DocumentExists('matching.exists')
     }
 
+    const chat = await chatService.create([
+      interactedAthleteId,
+      interactingAthleteId,
+    ])
+
     const matching = new Matching({
       interactedUser: interactedAthleteId,
       interactingUser: interactingAthleteId,
+      chat: chat.id,
       status: 'ACTIVE',
     })
     await matching.save()
@@ -51,6 +61,9 @@ class MatchingService {
     return Promise.resolve(MatchingMapper.matchingToDTO(matching))
   }
 
+  /**
+   * Removes matching between the athletes
+   */
   public async unlink(
     userId: string,
     matchingId: string,
@@ -80,6 +93,8 @@ class MatchingService {
 
     matching.status = 'CLOSED'
     await matching.save()
+
+    await chatService.closeChat(matching.chat)
 
     loggerService.info(
       `The Athlete unlinked the matching [athleteId: ${userId}, matchingId: ${matchingId}]`,

@@ -20,6 +20,7 @@ export interface MatchingResponse {
   interactedUserId: string
   interactingUserId: string
   status: 'ACTIVE' | 'CLOSED'
+  chatId: string
   createdAt: Date
 }
 
@@ -54,4 +55,21 @@ export interface CreatedSessionResponse {
 export interface PremiumPackageResponse extends SubscriptionPackageResponse {
   likeLimit: number
   canSeePersonalTrainers: boolean
+}
+
+export interface ChatResponse {
+  id: any
+  participantIds: string[]
+  messageIds: string[]
+  status: 'ACTIVE' | 'CLOSED'
+  createdAt: any
+  updatedAt: any
+}
+
+export interface MessageResponse {
+  id: any
+  senderId: string
+  chatId: string
+  content: string
+  createdAt: any
 }

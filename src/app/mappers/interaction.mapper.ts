@@ -11,7 +11,7 @@ import { LikedInteractionDocument } from '@app/model/interaction/LikedInteractio
 
 export abstract class InteractionMapper {
   public static likedInteractionToDTO(
-    document: LikedInteractionDocument,
+    document: LikedInteractionDocument | any,
   ): LikeAthleteResponse {
     return {
       id: document._id,

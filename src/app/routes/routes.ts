@@ -16,12 +16,14 @@ import userController from '@app/controllers/user/user.controller'
 import loginController from '@app/controllers/login/login.controller'
 import { LoginRequest } from '@app/controllers/login/login-controller.types'
 import { tokenVerify } from '@app/middlewares/token-verify.middleware'
-import paymentController from '@app/controllers/subscriptions/subscription.controller'
+import subscriptionController from '@app/controllers/subscriptions/subscription.controller'
 import {
   CreatePremiumPackageRequest,
   SubscribeRequest,
 } from '@app/controllers/subscriptions/subscription-controller.types'
 import bodyParser from 'body-parser'
+import chatController from '@app/controllers/chat/chat.controller'
+import { SendMessageRequest } from '@app/controllers/chat/chat-controller.types'
 
 /**
  * Creates and configures routes that belongs to application
@@ -77,33 +79,41 @@ export class Routes {
       .put(tokenVerify, athleteController.unlinkMatching)
 
     app
-      .route(`${paymentController.ENDPOINT}/subscribe`)
+      .route(`${subscriptionController.ENDPOINT}/subscribe`)
       .post(
         tokenVerify,
         bodyValidation<SubscribeRequest>(SubscribeRequest),
-        paymentController.subscribe,
+        subscriptionController.subscribe,
       )
 
     app
-      .route(`${paymentController.ENDPOINT}/webhook`)
-      .post(paymentController.webhook)
+      .route(`${subscriptionController.ENDPOINT}/webhook`)
+      .post(subscriptionController.webhook)
 
     app
-      .route(`${paymentController.ENDPOINT}/unsubscribe`)
+      .route(`${subscriptionController.ENDPOINT}/unsubscribe`)
       .post(
         tokenVerify,
         bodyValidation<SubscribeRequest>(SubscribeRequest),
-        paymentController.unsubscribe,
+        subscriptionController.unsubscribe,
       )
 
     app
-      .route(`${paymentController.ENDPOINT}/packages/premiums`)
+      .route(`${subscriptionController.ENDPOINT}/packages/premiums`)
       .post(
         tokenVerify,
         bodyValidation<CreatePremiumPackageRequest>(
           CreatePremiumPackageRequest,
         ),
-        paymentController.createPremiumPackage,
+        subscriptionController.createPremiumPackage,
+      )
+
+    app
+      .route(`${chatController.ENDPOINT}/:chatId/messages`)
+      .post(
+        tokenVerify,
+        bodyValidation<SendMessageRequest>(SendMessageRequest),
+        chatController.sendMessage,
       )
   }
 }

@@ -2,6 +2,7 @@ import '@app/config/env.config'
 import starter from '@app/app'
 import mongoConnection from '@app/config/mongo/mongo.config'
 import loggerService from '@app/services/logger/logger-service'
+import socketConnection from '@app/config/socket/socket.connection'
 
 /**
  * Firstly, tries connect to the MongoDB

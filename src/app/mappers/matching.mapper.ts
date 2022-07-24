@@ -12,6 +12,7 @@ export abstract class MatchingMapper {
       interactedUserId: document.interactedUser,
       interactingUserId: document.interactingUser,
       status: document.status,
+      chatId: document.chat,
       createdAt: document.createdAt,
     }
   }

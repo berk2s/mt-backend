@@ -16,6 +16,7 @@ import {
 } from '@app/model/interaction/BaseInteraction'
 import { DislikedInteraction } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteraction } from '@app/model/interaction/LikedInteraction'
+import { MatchingDocument } from '@app/model/matching/Matching'
 import loggerService from '../logger/logger-service'
 import matchingService from '../matching/matching.service'
 import userService from '../user/user.service'
@@ -60,9 +61,11 @@ class InteractionService {
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
     )
 
-    return Promise.resolve(
-      InteractionMapper.likedInteractionToDTO(likedInteraction),
-    )
+    const populated = await likedInteraction.populate<{
+      matching: MatchingDocument
+    }>('matching')
+
+    return Promise.resolve(InteractionMapper.likedInteractionToDTO(populated))
   }
 
   /**

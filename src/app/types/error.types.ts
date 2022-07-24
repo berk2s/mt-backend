@@ -28,4 +28,5 @@ export enum ErrorTypes {
   BAD_CREDENTIALS = 'bad_credentials',
   INVALID_GRANT = 'invalid_grant',
   PAYMENT_ERROR = 'payment_error',
+  SOCKET_ERROR = 'socket_error',
 }

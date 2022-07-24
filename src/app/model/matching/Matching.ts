@@ -20,6 +20,7 @@ export interface MatchingDocument extends Document {
   interactedUser: string
   interactingUser: string
   status: 'ACTIVE' | 'CLOSED'
+  chat: string
   createdAt: Date
 }
 
@@ -39,6 +40,11 @@ const matchingSchema = new Schema(
     interactingUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    chat: {
+      type: Schema.Types.ObjectId,
+      ref: 'Chat',
       required: true,
     },
     status: {
