@@ -125,6 +125,10 @@ export class Routes {
         bodyValidation<CreateGymRequest>(CreateGymRequest),
         gymController.create,
       )
+
+    app
+      .route(`${userController.ENDPOINT}/gyms/:gymId`)
+      .put(tokenVerify, userController.updateGym)
   }
 }
 

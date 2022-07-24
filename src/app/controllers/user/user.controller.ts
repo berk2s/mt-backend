@@ -7,8 +7,11 @@ import loggerService from '@app/services/logger/logger-service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction } from 'express'
-import { Response } from 'express'
-import { UpdateProfilePhotoRequest } from './user-controller.types'
+import { Request, Response } from 'express'
+import {
+  UpdateGymRequest,
+  UpdateProfilePhotoRequest,
+} from './user-controller.types'
 /**
  * User Controller
  * @class
@@ -18,7 +21,7 @@ class UserController {
   public readonly ENDPOINT: string = '/user'
 
   /**
-   * Updates profile photo
+   * Handles update profile photo request
    */
   public async updateProfilePhoto(
     req: IncomingRequest<UpdateProfilePhotoRequest>,
@@ -39,6 +42,26 @@ class UserController {
       )
 
       res.status(200).send(updatedUser)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles update gym preference request
+   */
+  public async updateGym(
+    req: IncomingRequest<UpdateGymRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { gymId } = req.params
+      const { userId } = req
+
+      const updatedUser = await userService.updateGym(userId, gymId)
+
+      return res.status(200).json(updatedUser)
     } catch (err) {
       next(err)
     }
