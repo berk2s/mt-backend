@@ -67,6 +67,22 @@ class UserController {
       next(err)
     }
   }
+
+  public async userInfo(
+    req: IncomingRequest<UserInfoRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const userInfo = await userService.getUserById(userId)
+
+      return res.status(200).json(userInfo)
+    } catch (err) {
+      next(err)
+    }
+  }
 }
 
 export default new UserController()

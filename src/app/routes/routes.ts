@@ -142,6 +142,12 @@ export class Routes {
         bodyValidation<UpdateAthleteRequest>(UpdateAthleteRequest),
         athleteController.updateAthlete,
       )
+
+    app.route(gymController.ENDPOINT).get(tokenVerify, gymController.gyms)
+
+    app
+      .route(`${userController.ENDPOINT}/me`)
+      .get(tokenVerify, userController.userInfo)
   }
 }
 

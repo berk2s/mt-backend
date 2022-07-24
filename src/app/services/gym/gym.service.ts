@@ -43,6 +43,17 @@ class GymService {
 
     return Promise.resolve(GymMapper.gymToDto(gym))
   }
+
+  /**
+   * Gets by gym id
+   */
+  public async findAll(): Promise<GymResponse[]> {
+    const gym = await this.gym.find()
+
+    if (!gym) return null
+
+    return Promise.resolve(GymMapper.gymListToDto(gym))
+  }
 }
 
 export default new GymService()

@@ -12,4 +12,13 @@ export abstract class GymMapper {
       name: document.name,
     }
   }
+
+  public static gymListToDto(document: GymDocument[]): GymResponse[] {
+    return document.map((i) => {
+      return {
+        id: i._id,
+        name: i.name,
+      }
+    })
+  }
 }

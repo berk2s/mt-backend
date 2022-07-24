@@ -38,7 +38,9 @@ const baseUserSchema = new Schema({
     languages: { type: Array<String>, required: true},
     gym: {
       type: Schema.Types.ObjectId,
-      ref: 'Gym'
+      ref: 'Gym',
+      required: false,
+      default: null
     }
 }, userSchemaOptions)
 

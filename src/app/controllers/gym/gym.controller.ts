@@ -4,7 +4,7 @@
 
 import gymService from '@app/services/gym/gym.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Response } from 'express'
+import { NextFunction, Response, Request } from 'express'
 import { CreateGymRequest } from './gym-controller.typs'
 
 /**
@@ -29,6 +29,19 @@ class GymController {
       const gym = await gymService.create(gymName)
 
       return res.status(201).json(gym)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles find all gyms request
+   */
+  public async gyms(req: Request, res: Response, next: NextFunction) {
+    try {
+      const gyms = await gymService.findAll()
+
+      return res.status(200).json(gyms)
     } catch (err) {
       next(err)
     }

@@ -191,6 +191,22 @@ class UserService {
     return Promise.resolve(UserMapper.athleteToDTO(athlete))
   }
 
+  /**
+   * Gets user by id
+   */
+  public async getUserById(userId: string): Promise<UserResponse> {
+    const user = await this.baseUserModel.findById(userId)
+
+    if (!user) {
+      loggerService.warn(
+        `User with the given id doesn't exists [userId: ${userId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
+
+    return Promise.resolve(UserMapper.baseUsertoDTO(user))
+  }
+
   private async checkGymExists(gymId: string) {
     const gym = await gymService.getById(gymId)
 
