@@ -54,6 +54,8 @@ class DiscoveryService {
             gym: '$gym',
             trainingExperience: '$trainingExperience',
             trainingDays: '$trainingDays',
+            imageUrl: '$imageUrl',
+            birthDate: '$birthDate',
           },
           interaction: {
             $addToSet: '$interactions',
@@ -81,6 +83,8 @@ class DiscoveryService {
           gym: '$_id.gym',
           trainingExperience: '$_id.trainingExperience',
           trainingDays: '$_id.trainingDays',
+          imageUrl: '$_id.imageUrl',
+          birthDate: '$_id.birthDate',
         },
       },
       {
@@ -90,6 +94,8 @@ class DiscoveryService {
         $limit: 2,
       },
     ])
+
+    console.log(athletes)
 
     return Promise.resolve(UserMapper.athletesToDTO(athletes))
   }
