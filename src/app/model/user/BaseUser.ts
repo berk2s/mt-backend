@@ -19,6 +19,7 @@ export interface BaseUserDocument extends Document {
   sex: Gender
   languages: string[]
   userType?: string
+  gym: string
 }
 
 export interface BaseUserModel extends Model<BaseUserDocument> {}
@@ -34,7 +35,11 @@ const baseUserSchema = new Schema({
     passwordHash: { type: String, required: true },
     birthDate: { type: Date, required: true },
     sex: { type: String, required: true },
-    languages: { type: Array<String>, required: true}
+    languages: { type: Array<String>, required: true},
+    gym: {
+      type: Schema.Types.ObjectId,
+      ref: 'Gym'
+    }
 }, userSchemaOptions)
 
 export const BaseUser: BaseUserModel = model<BaseUserDocument, BaseUserModel>('User', baseUserSchema);

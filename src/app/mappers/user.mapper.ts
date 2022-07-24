@@ -16,6 +16,7 @@ export abstract class UserMapper {
       birthday: user.birthDate,
       gender: user.sex,
       languages: user.languages,
+      gym: user.gym,
     }
   }
 
@@ -30,6 +31,7 @@ export abstract class UserMapper {
       languages: user.languages,
       workoutDays: user.trainingDays,
       experience: user.trainingExperience,
+      gym: user.gym,
     }
   }
 }

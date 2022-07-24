@@ -24,6 +24,8 @@ import {
 import bodyParser from 'body-parser'
 import chatController from '@app/controllers/chat/chat.controller'
 import { SendMessageRequest } from '@app/controllers/chat/chat-controller.types'
+import gymController from '@app/controllers/gym/gym.controller'
+import { CreateGymRequest } from '@app/controllers/gym/gym-controller.typs'
 
 /**
  * Creates and configures routes that belongs to application
@@ -114,6 +116,14 @@ export class Routes {
         tokenVerify,
         bodyValidation<SendMessageRequest>(SendMessageRequest),
         chatController.sendMessage,
+      )
+
+    app
+      .route(`${gymController.ENDPOINT}`)
+      .post(
+        tokenVerify,
+        bodyValidation<CreateGymRequest>(CreateGymRequest),
+        gymController.create,
       )
   }
 }

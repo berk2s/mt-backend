@@ -13,6 +13,7 @@ export interface UserResponse {
   workoutDays?: WorkoutDays[]
   experience?: Experience
   imageUrl?: string
+  gym?: string
 }
 
 export interface MatchingResponse {
@@ -72,4 +73,9 @@ export interface MessageResponse {
   chatId: string
   content: string
   createdAt: any
+}
+
+export interface GymResponse {
+  id?: any
+  name?: string
 }

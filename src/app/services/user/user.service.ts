@@ -14,6 +14,7 @@ import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { TokenUtility } from '@app/utilities/token-utility'
 import { ObjectId } from 'mongoose'
 import { loggers } from 'winston'
+import gymService from '../gym/gym.service'
 import imageService from '../image/image.service'
 import jwtService from '../jwt/jwt.service'
 import loggerService from '../logger/logger-service'
@@ -120,6 +121,39 @@ class UserService {
     })
 
     return Promise.resolve(doesUserExists ? true : false)
+  }
+
+  /**
+   * Updates the gym the user goes to
+   */
+  public async updateGym(userId: string, gymId: string): Promise<UserResponse> {
+    if (!ObjectIdUtility.isValid(gymId)) {
+      loggerService.warn(`Invalid gtm ID [gymId: ${gymId}]`)
+      throw new DocumentNotFound('gym.notFound')
+    }
+
+    await this.checkGymExists(gymId)
+
+    const user = await this.baseUserModel.findById(userId)
+    user.gym = gymId
+    await user.save()
+
+    loggerService.info(
+      `The gym the user goes to updated [userId: ${userId}, gymId: ${gymId}]`,
+    )
+
+    return Promise.resolve(UserMapper.baseUsertoDTO(user))
+  }
+
+  private async checkGymExists(gymId: string) {
+    const gym = await gymService.getById(gymId)
+
+    if (!gym) {
+      loggerService.warn(
+        `Gym with the given id doesn't exists [gymId: ${gymId}]`,
+      )
+      throw new DocumentNotFound('gym.notFound')
+    }
   }
 }
 
