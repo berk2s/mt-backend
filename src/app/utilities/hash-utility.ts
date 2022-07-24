@@ -22,7 +22,7 @@ export abstract class HashUtility {
   public static async compare(rawString, hashedString): Promise<boolean> {
     try {
       const matches = await bcrypt.compare(rawString, hashedString)
-
+      console.log(matches)
       return matches
     } catch (err) {
       throw new HashingError('hashing.failed')

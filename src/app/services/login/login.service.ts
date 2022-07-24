@@ -37,7 +37,7 @@ export class LoginService {
       throw new BadCredentials('credentials.invalid')
     }
 
-    if (!HashUtility.compare(password, user.passwordHash)) {
+    if (!(await HashUtility.compare(password, user.passwordHash))) {
       loggerService.warn(`Passwords are not matching [email: ${email}]`)
       throw new BadCredentials('credentials.invalid')
     }
