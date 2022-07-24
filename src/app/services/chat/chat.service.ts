@@ -2,6 +2,7 @@
  * @module app.services.chat
  */
 
+import socketConnection from '@app/config/socket/socket.connection'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { InvalidRequest } from '@app/exceptions/invalid-request-error'
@@ -23,6 +24,13 @@ class ChatService {
 
   constructor() {
     this.chat = Chat
+
+    socketConnection.socket.on('chat', async (socket) => {
+      const { to, content } = socket.data
+      const from = socket.userId
+
+      await this.sendMessage(from, to, content)
+    })
   }
 
   /**
@@ -80,6 +88,13 @@ class ChatService {
 
     chat.messages = [...chat.messages, message._id.toString()]
     await chat.save()
+
+    const chatMessages = await chat.populate('messages')
+
+    socketConnection.socket.to(chatId).emit('message', {
+      messages: chatMessages.messages,
+      from: senderId,
+    })
 
     loggerService.info(
       `A message sent to the chat by a user [senderId: ${senderId}, chatId: ${chatId}]`,
