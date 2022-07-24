@@ -35,4 +35,22 @@ export abstract class UserMapper {
       trainingDays: user.trainingDays,
     }
   }
+
+  public static athletesToDTO(users: AthleteUserDocument[]): AthleteResponse[] {
+    return users.map((user) => {
+      return {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        imageUrl: user.imageUrl,
+        birthday: user.birthDate,
+        gender: user.sex,
+        languages: user.languages,
+        workoutDays: user.trainingDays,
+        gym: user.gym,
+        trainingExperience: user.trainingExperience,
+        trainingDays: user.trainingDays,
+      }
+    })
+  }
 }

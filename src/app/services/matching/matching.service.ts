@@ -8,6 +8,7 @@ import { MatchingMapper } from '@app/mappers/matching.mapper'
 import { Matching, MatchingModel } from '@app/model/matching/Matching'
 import { MatchingResponse } from '@app/types/response.types'
 import chatService from '../chat/chat.service'
+import interactionService from '../interaction/interaction.service'
 import loggerService from '../logger/logger-service'
 
 /**
@@ -93,6 +94,8 @@ class MatchingService {
 
     matching.status = 'CLOSED'
     await matching.save()
+
+    await interactionService.closeByMatchingId(matchingId)
 
     await chatService.closeChat(matching.chat)
 

@@ -19,6 +19,7 @@ export interface BaseInteractionDocument extends Document {
   user: string
   toUser: string
   interactionType: 'LIKED' | 'DISLIKED'
+  status: 'ACTIVE' | 'CLOSED'
   createdAt: Date
 }
 
@@ -39,6 +40,10 @@ const baseInteractionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    status: {
+      type: String,
+      required: false,
+    },
   },
   baseInteractionOptions,
 )
@@ -47,3 +52,8 @@ export const BaseInteraction: BaseInteractionModel = model<
   BaseInteractionDocument,
   BaseInteractionModel
 >('Interaction', baseInteractionSchema)
+
+baseInteractionSchema.pre('save', async function (next) {
+  const user = this
+  user.status = 'ACTIVE'
+})

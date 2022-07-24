@@ -9,11 +9,18 @@
 export interface AthleteUserDocument extends BaseUserDocument {
   trainingExperience: Experience
   trainingDays: WorkoutDays[]
+  interaction: string[]
 }
 
 const athleteUserSchema = new Schema({
    trainingExperience: { type: String, required: true },
-   trainingDays: { type: Array<String>, required: true}
+   trainingDays: { type: Array<String>, required: true },
+   interaction: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Interaction',
+    }
+   ]
 }, userSchemaOptions)
  
 

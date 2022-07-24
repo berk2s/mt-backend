@@ -17,6 +17,8 @@ import {
 import { DislikedInteraction } from '@app/model/interaction/DislikedInteraction'
 import { LikedInteraction } from '@app/model/interaction/LikedInteraction'
 import { MatchingDocument } from '@app/model/matching/Matching'
+import { AthleteUser } from '@app/model/user/Athlete'
+import { Model } from 'mongoose'
 import loggerService from '../logger/logger-service'
 import matchingService from '../matching/matching.service'
 import userService from '../user/user.service'
@@ -28,9 +30,13 @@ import userService from '../user/user.service'
  */
 class InteractionService {
   private baseInteraction: BaseInteractionModel
+  private athleteModel: Model<any>
+  private likedInteraction: Model<any>
 
   constructor() {
     this.baseInteraction = BaseInteraction
+    this.athleteModel = AthleteUser
+    this.likedInteraction = LikedInteraction
   }
 
   /**
@@ -40,7 +46,10 @@ class InteractionService {
     userId: string,
     likedUserId: string,
   ): Promise<LikeAthleteResponse> {
-    await this.checkUsersExist(userId, likedUserId)
+    const [interactedUser, interactingUser] = await this.getUsers(
+      userId,
+      likedUserId,
+    )
     await this.checkDocumentExists(userId, likedUserId, 'LIKED')
 
     const likedInteraction = new LikedInteraction({
@@ -56,6 +65,18 @@ class InteractionService {
     }
 
     await likedInteraction.save()
+
+    interactedUser.interaction = [
+      ...interactedUser.interaction,
+      likedInteraction._id,
+    ]
+    await interactedUser.save()
+
+    interactingUser.interaction = [
+      ...interactingUser.interaction,
+      interactingUser._id,
+    ]
+    await interactingUser.save()
 
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
@@ -75,7 +96,11 @@ class InteractionService {
     userId: string,
     dislikedUserId: string,
   ): Promise<DislikeAthleteResponse> {
-    await this.checkUsersExist(userId, dislikedUserId)
+    const [interactedUser, interactingUser] = await this.getUsers(
+      userId,
+      dislikedUserId,
+    )
+
     await this.checkDocumentExists(userId, dislikedUserId, 'DISLIKED')
 
     const likedInteraction = await this.baseInteraction.findOne({
@@ -103,12 +128,47 @@ class InteractionService {
 
     await dislikedInteraction.save()
 
+    interactedUser.interaction = [
+      ...interactedUser.interaction,
+      likedInteraction._id,
+    ]
+    await interactedUser.save()
+
+    interactingUser.interaction = [
+      ...interactingUser.interaction,
+      interactingUser._id,
+    ]
+    await interactingUser.save()
+
     loggerService.info(
       `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
     )
 
     return Promise.resolve(
       InteractionMapper.dislikedInteractionToDTO(dislikedInteraction),
+    )
+  }
+
+  /**
+   * Closes by matching id
+   */
+  public async closeByMatchingId(matchingId: string) {
+    const likedInteraction = await this.likedInteraction.findOne({
+      mathcing: matchingId,
+    })
+
+    if (!likedInteraction) {
+      loggerService.warn(
+        `Interaction with the given matching id doesn't exists [matchingId: ${matchingId}]`,
+      )
+      throw new DocumentNotFound('interaction.notFound')
+    }
+
+    likedInteraction.status = 'CLOSED'
+    await likedInteraction.save()
+
+    loggerService.info(
+      `Liked interaction closed [interactionId: ${likedInteraction._id}, matchingId: ${matchingId}]`,
     )
   }
 
@@ -161,6 +221,24 @@ class InteractionService {
     })
 
     return Promise.resolve(isInteractedBefore ? true : false)
+  }
+
+  private async getUsers(interactingUserId: string, interactedUserId: string) {
+    const interactedUser = await this.athleteModel.findById(interactingUserId)
+    const interactingUser = await this.athleteModel.findById(interactedUserId)
+
+    if (!interactedUser) this.generateUserNotFoundError(interactingUserId)
+
+    if (!interactingUser) this.generateUserNotFoundError(interactedUserId)
+
+    return [interactedUser, interactingUser]
+  }
+
+  private generateUserNotFoundError(userId: string) {
+    loggerService.warn(
+      `User with the given id doesn't exists [userId: ${userId}]`,
+    )
+    throw new DocumentNotFound('user.notFound')
   }
 }
 
