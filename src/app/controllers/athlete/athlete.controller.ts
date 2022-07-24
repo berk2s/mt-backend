@@ -13,6 +13,7 @@ import {
   LikeAthleteRequest,
   RegisterAthleteRequest,
   UnlinkMatchingRequest,
+  UpdateAthleteRequest,
 } from './athlete-controller.types'
 
 /**
@@ -116,6 +117,25 @@ class AthleteController {
       const user = await userService.getAthleteById(userId)
 
       return res.status(200).json(user)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles update athlete request
+   */
+  public async updateAthlete(
+    req: IncomingRequest<UpdateAthleteRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const athlete = await userService.updateAthlete(userId, req.bodyDto)
+
+      res.status(200).json(athlete)
     } catch (err) {
       next(err)
     }

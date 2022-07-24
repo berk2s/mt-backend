@@ -9,6 +9,7 @@ import {
   DislikeAthleteRequest,
   LikeAthleteRequest,
   RegisterAthleteRequest,
+  UpdateAthleteRequest,
 } from '@app/controllers/athlete/athlete-controller.types'
 import athleteController from '@app/controllers/athlete/athlete.controller'
 import uploadMiddleware from '@app/middlewares/image-upload.middleware'
@@ -133,6 +134,14 @@ export class Routes {
     app
       .route(`${athleteController.ENDPOINT}/me`)
       .get(tokenVerify, athleteController.getUserInfo)
+
+    app
+      .route(athleteController.ENDPOINT)
+      .put(
+        tokenVerify,
+        bodyValidation<UpdateAthleteRequest>(UpdateAthleteRequest),
+        athleteController.updateAthlete,
+      )
   }
 }
 

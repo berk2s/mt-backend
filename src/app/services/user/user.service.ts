@@ -2,7 +2,10 @@
  * @module app.services.user
  */
 
-import { RegisterAthleteRequest } from '@app/controllers/athlete/athlete-controller.types'
+import {
+  RegisterAthleteRequest,
+  UpdateAthleteRequest,
+} from '@app/controllers/athlete/athlete-controller.types'
 import { TokenResponse } from '@app/controllers/login/login-controller.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
@@ -12,8 +15,7 @@ import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
 import { AthleteResponse, UserResponse } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { TokenUtility } from '@app/utilities/token-utility'
-import { Model, ObjectId } from 'mongoose'
-import { loggers } from 'winston'
+import { Model } from 'mongoose'
 import gymService from '../gym/gym.service'
 import imageService from '../image/image.service'
 import jwtService from '../jwt/jwt.service'
@@ -50,14 +52,7 @@ class UserService {
       trainingExperience,
     } = registerUser
 
-    const isEmailTaken = await this.baseUserModel.exists({ email })
-
-    if (isEmailTaken) {
-      loggerService.warn(
-        `User with given email already exists [email: ${email}]`,
-      )
-      throw new DocumentExists('email.exists')
-    }
+    await this.checkEmailTaken(email)
 
     const athlete = new AthleteUser({
       fullName,
@@ -163,6 +158,39 @@ class UserService {
     return Promise.resolve(UserMapper.athleteToDTO(user))
   }
 
+  /**
+   * Updates athlete by id
+   */
+  public async updateAthlete(
+    athleteId: string,
+    updateAthlete: UpdateAthleteRequest,
+  ): Promise<AthleteResponse> {
+    const athlete = await this.athleteModel.findById(athleteId)
+
+    if (!athlete) {
+      loggerService.warn(
+        `Athlete with the given id doesn't exists [athleteId: ${athleteId}]`,
+      )
+      throw new DocumentNotFound('athlete.notFound')
+    }
+
+    if (updateAthlete.email !== athlete.email)
+      await this.checkEmailTaken(updateAthlete.email)
+
+    athlete.fullName = updateAthlete.fullName
+    athlete.email = updateAthlete.email
+    athlete.birthDate = updateAthlete.birthday
+    athlete.sex = updateAthlete.gender
+    athlete.languages = updateAthlete.languages
+    athlete.trainingExperience = updateAthlete.trainingExperience
+    athlete.trainingDays = updateAthlete.trainingDays
+    await athlete.save()
+
+    loggerService.info(`The Athlete is updated [athleteId: ${athleteId}]`)
+
+    return Promise.resolve(UserMapper.athleteToDTO(athlete))
+  }
+
   private async checkGymExists(gymId: string) {
     const gym = await gymService.getById(gymId)
 
@@ -171,6 +199,17 @@ class UserService {
         `Gym with the given id doesn't exists [gymId: ${gymId}]`,
       )
       throw new DocumentNotFound('gym.notFound')
+    }
+  }
+
+  private async checkEmailTaken(email: string) {
+    const isEmailTaken = await this.baseUserModel.exists({ email })
+
+    if (isEmailTaken) {
+      loggerService.warn(
+        `User with given email already exists [email: ${email}]`,
+      )
+      throw new DocumentExists('email.exists')
     }
   }
 }
