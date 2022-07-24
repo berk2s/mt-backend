@@ -7,6 +7,7 @@ import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { MatchingMapper } from '@app/mappers/matching.mapper'
 import { Matching, MatchingModel } from '@app/model/matching/Matching'
 import { MatchingResponse } from '@app/types/response.types'
+import chatService from '../chat/chat.service'
 import loggerService from '../logger/logger-service'
 
 /**
@@ -37,9 +38,15 @@ class MatchingService {
       throw new DocumentExists('matching.exists')
     }
 
+    const chat = await chatService.create([
+      interactedAthleteId,
+      interactingAthleteId,
+    ])
+
     const matching = new Matching({
       interactedUser: interactedAthleteId,
       interactingUser: interactingAthleteId,
+      chat: chat.id,
       status: 'ACTIVE',
     })
     await matching.save()
