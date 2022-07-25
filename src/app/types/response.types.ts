@@ -71,9 +71,20 @@ export interface ChatResponse {
 
 export interface MessageResponse {
   id: any
-  senderId: string
-  chatId: string
+  senderId: any
+  chatId: any
   content: string
+  createdAt: any
+}
+
+export interface SendMessageResponse {
+  chatId: any
+  messages: {
+    id: any
+    content: string
+    senderId: any
+    createdAt: any
+  }[]
   createdAt: any
 }
 
@@ -89,10 +100,12 @@ export interface AthleteResponse extends UserResponse {
 
 export interface MyChatsResponse {
   chatId?: any
+  matchingId?: any
   participants?:
     | {
         _id: any
         fullName: string
+        imageUrl: string
       }[]
     | any
   status?: string

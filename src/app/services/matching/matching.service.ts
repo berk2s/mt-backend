@@ -55,6 +55,8 @@ class MatchingService {
     })
     await matching.save()
 
+    await chatService.assignMatching(chat.id, matching.id)
+
     loggerService.info(
       `Athletes are succesfully matched [interactedAthleteId: ${interactedAthleteId}, interactingAthleteId: ${interactingAthleteId}]`,
     )
@@ -104,6 +106,19 @@ class MatchingService {
     )
 
     return Promise.resolve(MatchingMapper.matchingToDTO(matching))
+  }
+
+  /**
+   * Checks matching exists by id or not
+   */
+  public async existsById(matchingId: string) {
+    const exists = await this.matching.exists({
+      _id: matchingId,
+    })
+
+    if (!exists) return false
+
+    return true
   }
 
   private async checkActiveMathces(

@@ -31,14 +31,26 @@ const io = new Server(httpServer, {
 })
 
 io.on('connection', (socket) => {
-  loggerService.info(`An socket connection established. `)
+  loggerService.info(`An socket connection established. [id: ${socket.id}]`)
 
-  socket.on('chat', async (socket) => {
-    const { to, content } = socket.data
-    const from = socket.userId
+  socket.on('join', (data) => {
+    const { chatId } = data
 
-    await chatService.sendMessage(from, to, content)
+    socket.join(chatId)
   })
+
+  socket.on('chat', async (data) => {
+    const { from, to, content } = data
+
+    const messageResponse = await chatService.sendMessage(from, to, content)
+
+    io.to(to).emit('chat', {
+      chat: messageResponse,
+      from: from,
+    })
+  })
+
+  socket.emit('test', { data: true })
 })
 
 io.use(socketTokenVerify)

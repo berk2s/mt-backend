@@ -14,8 +14,9 @@ import {
 export interface ChatDocument extends Document {
   _id?: ObjectId
   participants: string[] | any
-  messages: string[]
+  messages: string[] | any
   status: 'ACTIVE' | 'CLOSED'
+  matching: string
   createdAt: Date
   updatedAt: Date
 }
@@ -42,6 +43,11 @@ const chatSchema = new Schema(
         required: true,
       },
     ],
+    matching: {
+      type: Schema.Types.ObjectId,
+      ref: 'Matching',
+      required: false,
+    },
     status: {
       type: String,
       required: true,

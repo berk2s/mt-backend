@@ -154,6 +154,10 @@ export class Routes {
       .get(tokenVerify, discoveryController.discover)
 
     app.route(chatController.ENDPOINT).get(tokenVerify, chatController.myChats)
+
+    app
+      .route(`${chatController.ENDPOINT}/:chatId/messages`)
+      .get(tokenVerify, chatController.chatMessages)
   }
 }
 

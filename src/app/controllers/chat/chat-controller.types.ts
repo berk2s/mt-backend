@@ -14,3 +14,5 @@ export class SendMessageRequest extends BodyDTO {
 }
 
 export class MyChatsRequest extends BodyDTO {}
+
+export class ChatMessagesRequest extends BodyDTO {}

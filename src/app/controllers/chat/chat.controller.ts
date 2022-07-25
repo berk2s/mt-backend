@@ -5,7 +5,11 @@
 import chatService from '@app/services/chat/chat.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
-import { MyChatsRequest, SendMessageRequest } from './chat-controller.types'
+import {
+  ChatMessagesRequest,
+  MyChatsRequest,
+  SendMessageRequest,
+} from './chat-controller.types'
 
 /**
  * Chat controller
@@ -49,6 +53,26 @@ class ChatController {
       const chats = await chatService.getChatsByUserId(userId)
 
       return res.status(200).json(chats)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles get chat messages request
+   */
+  public async chatMessages(
+    req: IncomingRequest<ChatMessagesRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { chatId } = req.params
+      const { userId } = req
+
+      const messages = await chatService.getMessagesByChatId(chatId, userId)
+
+      return res.status(200).json(messages)
     } catch (err) {
       next(err)
     }

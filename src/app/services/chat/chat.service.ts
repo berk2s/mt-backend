@@ -5,18 +5,21 @@
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { InvalidRequest } from '@app/exceptions/invalid-request-error'
+import { UnauthorizedError } from '@app/exceptions/unauthorized-error'
 import { ChatMapper } from '@app/mappers/chat.mapper'
 import { Chat, ChatModel } from '@app/model/chat/Chat'
-import { Message } from '@app/model/chat/Message'
+import { Message, MessageModel } from '@app/model/chat/Message'
 import {
   ChatResponse,
   MessageResponse,
   MyChatsResponse,
+  SendMessageResponse,
 } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { Types } from 'mongoose'
 import { io } from 'server'
 import loggerService from '../logger/logger-service'
+import matchingService from '../matching/matching.service'
 import userService from '../user/user.service'
 
 /**
@@ -26,9 +29,11 @@ import userService from '../user/user.service'
  */
 class ChatService {
   private chat: ChatModel
+  private message: MessageModel
 
   constructor() {
     this.chat = Chat
+    this.message = Message
   }
 
   /**
@@ -64,10 +69,17 @@ class ChatService {
     senderId: string,
     chatId: string,
     content: string,
-  ): Promise<MessageResponse> {
+  ): Promise<SendMessageResponse> {
     await this.checkObjectIds(senderId, chatId)
 
     const chat = await this.getChatById(chatId)
+
+    if (chat.status === 'CLOSED') {
+      loggerService.warn(
+        `User tried to send a message to the closed chat [userId: ${senderId}, chatId: ${chatId}]`,
+      )
+      throw new DocumentNotFound('chat.closed')
+    }
 
     await this.checkParticipantIds([senderId])
     if (!(await this.checkParticipant(chatId, senderId))) {
@@ -87,18 +99,22 @@ class ChatService {
     chat.messages = [...chat.messages, message._id.toString()]
     await chat.save()
 
-    const chatMessages = await chat.populate('messages')
-
-    io.to(chatId).emit('message', {
-      messages: chatMessages.messages,
-      from: senderId,
-    })
+    const chatMessages = await chat.populate(
+      'messages',
+      '_id content sender createdAt',
+      null,
+      {
+        sort: {
+          createdAt: 1,
+        },
+      },
+    )
 
     loggerService.info(
       `A message sent to the chat by a user [senderId: ${senderId}, chatId: ${chatId}]`,
     )
 
-    return Promise.resolve(ChatMapper.messageToDTO(message))
+    return Promise.resolve(ChatMapper.messageToDTO(chatMessages))
   }
 
   /**
@@ -148,6 +164,7 @@ class ChatService {
           _id: {
             id: '$_id',
             status: '$status',
+            matching: '$matching',
             createdAt: '$createdAt',
           },
           participants: {
@@ -159,9 +176,11 @@ class ChatService {
         $project: {
           _id: '$_id.id',
           status: '$_id.status',
+          matching: '$_id.matching',
           participants: {
             _id: 1,
             fullName: 1,
+            imageUrl: 1,
           },
           createdAt: '$_id.createdAt',
         },
@@ -175,9 +194,41 @@ class ChatService {
       throw new DocumentNotFound('chat.notFound')
     }
 
-    console.log(chat)
-
     return Promise.resolve(ChatMapper.chatWithParticipantsToDTO(chat))
+  }
+
+  /**
+   * Gets chat messages
+   */
+  public async getMessagesByChatId(
+    chatId: string,
+    userId: string,
+  ): Promise<MessageResponse[]> {
+    await this.checkChatId(chatId)
+    await this.checkUserExists(userId)
+    await this.checkChatBelongsToUser(chatId, userId)
+
+    const messages = await this.message.find({
+      chat: chatId,
+    })
+
+    return Promise.resolve(ChatMapper.messagesToDTO(messages))
+  }
+
+  /**
+   * Assigns a matching
+   */
+  public async assignMatching(chatId: string, matchingId: string) {
+    await this.checkMatching(matchingId)
+
+    const chat = await this.chat.findById(chatId)
+
+    chat.matching = matchingId
+    chat.save()
+
+    loggerService.info(
+      `A matching is assigned to a chat [matchingId: ${matchingId}, chatId: ${chatId}]`,
+    )
   }
 
   private async checkParticipantIds(participantIds: string[]) {
@@ -254,6 +305,33 @@ class ChatService {
         `User with the given id doesn't exists [userId: ${userId}]`,
       )
       throw new DocumentNotFound('user.notFound')
+    }
+  }
+
+  private async checkChatBelongsToUser(chatId: string, userId: string) {
+    const chat = await this.chat.find({
+      _id: chatId,
+      participants: {
+        $in: [new Types.ObjectId(userId)],
+      },
+    })
+
+    if (!chat || chat.length === 0) {
+      loggerService.warn(
+        `The User is not participant of the chat [chatId: ${chatId}, userId: ${userId}]`,
+      )
+      throw new UnauthorizedError('user.notParticipant')
+    }
+  }
+
+  private async checkMatching(matchingId: string) {
+    const matching = matchingService.existsById(matchingId)
+
+    if (!matching) {
+      loggerService.warn(
+        `Matching with the given id doesn't eixsts [matchingId: ${matchingId}]`,
+      )
+      throw new DocumentNotFound('matching.notFound')
     }
   }
 }
