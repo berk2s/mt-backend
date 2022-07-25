@@ -95,8 +95,6 @@ class DiscoveryService {
       },
     ])
 
-    console.log(athletes)
-
     return Promise.resolve(UserMapper.athletesToDTO(athletes))
   }
 }
