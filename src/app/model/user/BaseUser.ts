@@ -39,7 +39,6 @@ const baseUserSchema = new Schema({
     gym: {
       type: Schema.Types.ObjectId,
       ref: 'Gym',
-      required: false,
       default: null
     }
 }, userSchemaOptions)

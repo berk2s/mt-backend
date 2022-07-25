@@ -22,11 +22,11 @@ import {
   CreatePremiumPackageRequest,
   SubscribeRequest,
 } from '@app/controllers/subscriptions/subscription-controller.types'
-import bodyParser from 'body-parser'
 import chatController from '@app/controllers/chat/chat.controller'
 import { SendMessageRequest } from '@app/controllers/chat/chat-controller.types'
 import gymController from '@app/controllers/gym/gym.controller'
 import { CreateGymRequest } from '@app/controllers/gym/gym-controller.typs'
+import discoveryController from '@app/controllers/discovery/discovery.controller'
 
 /**
  * Creates and configures routes that belongs to application
@@ -148,6 +148,10 @@ export class Routes {
     app
       .route(`${userController.ENDPOINT}/me`)
       .get(tokenVerify, userController.userInfo)
+
+    app
+      .route(discoveryController.ENDPOINT)
+      .get(tokenVerify, discoveryController.discover)
   }
 }
 

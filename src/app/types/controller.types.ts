@@ -16,6 +16,7 @@ export interface IncomingRequest<T extends BodyDTO> extends Request {
   userId?: string
   userEmail?: string
   rawBody?: any
+  querymen?: any
 }
 
 /**

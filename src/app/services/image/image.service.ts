@@ -21,7 +21,7 @@ class ImageService {
     const filepath = this.filepath(filename)
 
     await sharp(buffer)
-      .resize(300, 300, {
+      .resize(300, 350, {
         fit: sharp.fit.inside,
         withoutEnlargement: true,
       })
