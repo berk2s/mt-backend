@@ -152,6 +152,8 @@ export class Routes {
     app
       .route(discoveryController.ENDPOINT)
       .get(tokenVerify, discoveryController.discover)
+
+    app.route(chatController.ENDPOINT).get(tokenVerify, chatController.myChats)
   }
 }
 

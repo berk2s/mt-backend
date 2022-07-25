@@ -12,3 +12,5 @@ export class SendMessageRequest extends BodyDTO {
   @Expose()
   content: string
 }
+
+export class MyChatsRequest extends BodyDTO {}

@@ -8,8 +8,14 @@ import { InvalidRequest } from '@app/exceptions/invalid-request-error'
 import { ChatMapper } from '@app/mappers/chat.mapper'
 import { Chat, ChatModel } from '@app/model/chat/Chat'
 import { Message } from '@app/model/chat/Message'
-import { ChatResponse, MessageResponse } from '@app/types/response.types'
+import {
+  ChatResponse,
+  MessageResponse,
+  MyChatsResponse,
+} from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
+import { Types } from 'mongoose'
+import { io } from 'server'
 import loggerService from '../logger/logger-service'
 import userService from '../user/user.service'
 
@@ -83,10 +89,10 @@ class ChatService {
 
     const chatMessages = await chat.populate('messages')
 
-    // socketConnection.socket.to(chatId).emit('message', {
-    //   messages: chatMessages.messages,
-    //   from: senderId,
-    // })
+    io.to(chatId).emit('message', {
+      messages: chatMessages.messages,
+      from: senderId,
+    })
 
     loggerService.info(
       `A message sent to the chat by a user [senderId: ${senderId}, chatId: ${chatId}]`,
@@ -107,6 +113,71 @@ class ChatService {
     loggerService.info(`The Chat room closed [chatId: ${chatId}]`)
 
     return Promise.resolve(ChatMapper.chatToDTO(chat))
+  }
+
+  /**
+   * Gets chat by id
+   */
+  public async getChatsByUserId(userId: string): Promise<MyChatsResponse[]> {
+    await this.checkUserExists(userId)
+
+    const chat = await this.chat.aggregate([
+      {
+        $match: {
+          participants: {
+            $in: [new Types.ObjectId(userId)],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'participants',
+          foreignField: '_id',
+          as: 'participants',
+        },
+      },
+      {
+        $unwind: {
+          path: '$participants',
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            id: '$_id',
+            status: '$status',
+            createdAt: '$createdAt',
+          },
+          participants: {
+            $addToSet: '$participants',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: '$_id.id',
+          status: '$_id.status',
+          participants: {
+            _id: 1,
+            fullName: 1,
+          },
+          createdAt: '$_id.createdAt',
+        },
+      },
+    ])
+
+    if (!chat) {
+      loggerService.warn(
+        `Chat with the given user id doesn't exists [userId: ${userId}]`,
+      )
+      throw new DocumentNotFound('chat.notFound')
+    }
+
+    console.log(chat)
+
+    return Promise.resolve(ChatMapper.chatWithParticipantsToDTO(chat))
   }
 
   private async checkParticipantIds(participantIds: string[]) {
@@ -173,6 +244,17 @@ class ChatService {
         throw new InvalidRequest('id.invalid')
       }
     })
+  }
+
+  private async checkUserExists(userId: string) {
+    const doesUserExists = await userService.existsById(userId)
+
+    if (!doesUserExists) {
+      loggerService.warn(
+        `User with the given id doesn't exists [userId: ${userId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
   }
 }
 

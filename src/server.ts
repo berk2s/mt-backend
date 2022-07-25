@@ -33,7 +33,6 @@ const io = new Server(httpServer, {
 io.on('connection', (socket) => {
   loggerService.info(`An socket connection established. `)
 
-  socket.emit('test', { data: 'came' })
   socket.on('chat', async (socket) => {
     const { to, content } = socket.data
     const from = socket.userId

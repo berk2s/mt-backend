@@ -13,7 +13,7 @@ import {
 
 export interface ChatDocument extends Document {
   _id?: ObjectId
-  participants: string[]
+  participants: string[] | any
   messages: string[]
   status: 'ACTIVE' | 'CLOSED'
   createdAt: Date

@@ -1,3 +1,4 @@
+import { StringLiteral } from 'typescript'
 import { Experience, Gender, WorkoutDays } from './enums'
 
 /**
@@ -60,7 +61,8 @@ export interface PremiumPackageResponse extends SubscriptionPackageResponse {
 
 export interface ChatResponse {
   id: any
-  participantIds: string[]
+  participantIds?: string[] | any
+  participants?: any
   messageIds: string[]
   status: 'ACTIVE' | 'CLOSED'
   createdAt: any
@@ -83,4 +85,16 @@ export interface GymResponse {
 export interface AthleteResponse extends UserResponse {
   trainingExperience: any
   trainingDays: any
+}
+
+export interface MyChatsResponse {
+  chatId?: any
+  participants?:
+    | {
+        _id: any
+        fullName: string
+      }[]
+    | any
+  status?: string
+  createdAt?: Date
 }
