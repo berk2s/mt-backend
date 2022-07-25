@@ -49,11 +49,13 @@ class AthleteController {
     next: NextFunction,
   ) {
     try {
+      const { likedAthleteId } = req.params
+
       const { userId } = req
 
       const likedResponse = await interactionService.likeAthlete(
         userId,
-        req.bodyDto.likedUserId,
+        likedAthleteId,
       )
 
       res.status(200).send(likedResponse)
@@ -71,11 +73,13 @@ class AthleteController {
     next: NextFunction,
   ) {
     try {
+      const { dislikedAthleteId } = req.params
+
       const { userId } = req
 
       const dislikedResponse = await interactionService.dislikeAthlete(
         userId,
-        req.bodyDto.dislikedUserId,
+        dislikedAthleteId,
       )
 
       res.status(200).send(dislikedResponse)

@@ -93,27 +93,9 @@ export class RegisterAthleteRequest extends BodyDTO {
   trainingExperience?: Experience
 }
 
-export class LikeAthleteRequest extends BodyDTO {
-  @IsDefined({
-    message: 'userId.empty',
-  })
-  @Validate(ObjectIdValidator, {
-    message: 'userId.invalid',
-  })
-  @Expose()
-  likedUserId: string
-}
+export class LikeAthleteRequest extends BodyDTO {}
 
-export class DislikeAthleteRequest extends BodyDTO {
-  @IsDefined({
-    message: 'userId.empty',
-  })
-  @Validate(ObjectIdValidator, {
-    message: 'userId.invalid',
-  })
-  @Expose()
-  dislikedUserId: string
-}
+export class DislikeAthleteRequest extends BodyDTO {}
 
 export interface InteractionResponse {
   id?: any
