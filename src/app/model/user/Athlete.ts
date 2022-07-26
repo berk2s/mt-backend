@@ -10,6 +10,7 @@ export interface AthleteUserDocument extends BaseUserDocument {
   trainingExperience: Experience
   trainingDays: WorkoutDays[]
   interaction: string[]
+  interactedBy: []
 }
 
 const athleteUserSchema = new Schema({
@@ -24,7 +25,8 @@ const athleteUserSchema = new Schema({
    interactedBy: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      default: []
     }
   ]
 }, userSchemaOptions)

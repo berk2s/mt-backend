@@ -64,8 +64,10 @@ class InteractionService {
 
     await likedInteraction.save()
 
-    likedAthlete.interactedBy = [...likedAthlete.interactedBy, userId]
-    await likedAthlete.save()
+    if (likedAthlete.interactedBy) {
+      likedAthlete.interactedBy = [...likedAthlete.interactedBy, userId]
+      await likedAthlete.save()
+    }
 
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
@@ -114,8 +116,10 @@ class InteractionService {
 
     await dislikedInteraction.save()
 
-    dislikedAthlete.interactedBy = [...dislikedAthlete.likedBy, userId]
-    await dislikedAthlete.save()
+    if (Array.isArray(dislikedAthlete.interactedBy)) {
+      dislikedAthlete.interactedBy = [...dislikedAthlete.interactedBy, userId]
+      await dislikedAthlete.save()
+    }
 
     loggerService.info(
       `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,

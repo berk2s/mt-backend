@@ -32,9 +32,13 @@ class DiscoveryService {
 
     const athletes = await this.athleteModel
       .find({
+        _id: {
+          $ne: userId,
+        },
         interactedBy: {
           $nin: [new Types.ObjectId(userId)],
         },
+        ...query.filter,
       })
       .limit(2)
 
