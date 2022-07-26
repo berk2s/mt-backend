@@ -25,7 +25,7 @@ export abstract class SubscriptionMapper {
       packageType: document.packageType,
       foreginProductId: document.foreginProductId,
       foreginPriceId: document.foreginPriceId,
-      foreginRef: document.foreginRef,
+      foreginRef: document.foreginRef ? document.foreginRef : null,
       createdAt: document.createdAt,
     }
   }
@@ -62,5 +62,17 @@ export abstract class SubscriptionMapper {
       foreginRef: document.foreginRef,
       createdAt: document.createdAt,
     }
+  }
+
+  public static packagesToDTO(
+    documents: PremiumPackageDocument[],
+  ): PremiumPackageResponse[] {
+    return documents.map((i) => {
+      return {
+        ...SubscriptionMapper.packageToDTO(i),
+        likeLimit: i.likeLimit,
+        canSeePersonalTrainers: i.canSeePersonalTrainers,
+      }
+    })
   }
 }

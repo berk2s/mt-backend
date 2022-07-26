@@ -10,9 +10,13 @@ import {
   SubscriptionPackage,
 } from '@app/model/subscription/Package'
 import { PremiumPackage } from '@app/model/subscription/PremiumPackage'
-import { SubscriptionPackageResponse } from '@app/types/response.types'
+import {
+  PremiumPackageResponse,
+  SubscriptionPackageResponse,
+} from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { RandomUtility } from '@app/utilities/random-utility'
+import { Model } from 'mongoose'
 import loggerService from '../logger/logger-service'
 import stripeService from '../stripe/stripe.service'
 
@@ -23,9 +27,11 @@ import stripeService from '../stripe/stripe.service'
  */
 class SubscriptionPackageService {
   private subscriptionPackage: SubscriptionPackageModel
+  private premiumPackage: Model<any>
 
   constructor() {
     this.subscriptionPackage = SubscriptionPackage
+    this.premiumPackage = PremiumPackage
   }
 
   /**
@@ -133,6 +139,15 @@ class SubscriptionPackageService {
     )
 
     return Promise.resolve(SubscriptionMapper.premiumToDTO(premiumPackage))
+  }
+
+  /**
+   * Lists all created premium packagaes
+   */
+  public async getPremiumPackages(): Promise<PremiumPackageResponse[]> {
+    const packages = await this.premiumPackage.find()
+
+    return Promise.resolve(SubscriptionMapper.packagesToDTO(packages))
   }
 }
 

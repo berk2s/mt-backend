@@ -6,7 +6,7 @@ import stripeService from '@app/services/stripe/stripe.service'
 import subscriptionPackageService from '@app/services/subscription/subscription-package.service'
 import subscriptionService from '@app/services/subscription/subscription.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import {
   CreatePremiumPackageRequest,
   SubscribeRequest,
@@ -103,6 +103,23 @@ class SubscriptionController {
       )
 
       return res.status(201).json(premiumPackage)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Gets premium packages
+   */
+  public async getPremiumPackages(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const premiumPackages = await subscriptionPackageService.getPremiumPackages()
+
+      return res.status(200).json(premiumPackages)
     } catch (err) {
       next(err)
     }

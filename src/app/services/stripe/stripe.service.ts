@@ -48,7 +48,7 @@ class StripeService {
     const createSessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: 'subscription',
       billing_address_collection: 'auto',
-      customer_email: userEmail,
+      //     customer_email: userEmail,
       subscription_data: {
         metadata: {
           athleteId: `${userId}`,

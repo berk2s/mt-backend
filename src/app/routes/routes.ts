@@ -150,6 +150,10 @@ export class Routes {
     app
       .route(`${chatController.ENDPOINT}/:chatId/messages`)
       .get(tokenVerify, chatController.chatMessages)
+
+    app
+      .route(`${subscriptionController.ENDPOINT}/packages/premiums`)
+      .get(tokenVerify, subscriptionController.getPremiumPackages)
   }
 }
 
