@@ -13,7 +13,9 @@ class QueryParser {
   private parser: MongooseQueryParser
 
   constructor() {
-    this.parser = new MongooseQueryParser()
+    this.parser = new MongooseQueryParser({
+      dateFormat: ['yyyyMMdd', 'yyyy-MM-dd'],
+    })
   }
 
   /**
