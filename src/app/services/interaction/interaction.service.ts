@@ -46,10 +46,8 @@ class InteractionService {
     userId: string,
     likedUserId: string,
   ): Promise<LikeAthleteResponse> {
-    const [interactedUser, interactingUser] = await this.getUsers(
-      userId,
-      likedUserId,
-    )
+    const likedAthlete = await this.getAthlete(likedUserId)
+
     await this.checkDocumentExists(userId, likedUserId, 'LIKED')
 
     const likedInteraction = new LikedInteraction({
@@ -66,17 +64,8 @@ class InteractionService {
 
     await likedInteraction.save()
 
-    interactedUser.interaction = [
-      ...interactedUser.interaction,
-      likedInteraction._id,
-    ]
-    await interactedUser.save()
-
-    interactingUser.interaction = [
-      ...interactingUser.interaction,
-      interactingUser._id,
-    ]
-    await interactingUser.save()
+    likedAthlete.interactedBy = [...likedAthlete.interactedBy, userId]
+    await likedAthlete.save()
 
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
@@ -96,10 +85,7 @@ class InteractionService {
     userId: string,
     dislikedUserId: string,
   ): Promise<DislikeAthleteResponse> {
-    const [interactedUser, interactingUser] = await this.getUsers(
-      userId,
-      dislikedUserId,
-    )
+    const dislikedAthlete = await this.getAthlete(dislikedUserId)
 
     await this.checkDocumentExists(userId, dislikedUserId, 'DISLIKED')
 
@@ -128,17 +114,8 @@ class InteractionService {
 
     await dislikedInteraction.save()
 
-    interactedUser.interaction = [
-      ...interactedUser.interaction,
-      likedInteraction._id,
-    ]
-    await interactedUser.save()
-
-    interactingUser.interaction = [
-      ...interactingUser.interaction,
-      interactingUser._id,
-    ]
-    await interactingUser.save()
+    dislikedAthlete.interactedBy = [...dislikedAthlete.likedBy, userId]
+    await dislikedAthlete.save()
 
     loggerService.info(
       `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
@@ -232,6 +209,14 @@ class InteractionService {
     if (!interactingUser) this.generateUserNotFoundError(interactedUserId)
 
     return [interactedUser, interactingUser]
+  }
+
+  private async getAthlete(likedAthleteId: string) {
+    const likedAthlete = await this.athleteModel.findById(likedAthleteId)
+
+    if (!likedAthlete) this.generateUserNotFoundError(likedAthleteId)
+
+    return likedAthlete
   }
 
   private generateUserNotFoundError(userId: string) {

@@ -20,7 +20,13 @@ const athleteUserSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Interaction',
     }
-   ]
+   ],
+   interactedBy: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ]
 }, userSchemaOptions)
  
 

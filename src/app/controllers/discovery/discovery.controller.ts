@@ -24,9 +24,10 @@ class DiscoveryController {
     next: NextFunction,
   ) {
     try {
-      const { query } = req.query
+      const query = req.query
+      const { userId } = req
 
-      const discoveryList = await discoveryService.discover(req.query)
+      const discoveryList = await discoveryService.discover(query, userId)
 
       return res.status(200).json(discoveryList)
     } catch (err) {

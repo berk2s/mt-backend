@@ -62,20 +62,12 @@ export class Routes {
       )
 
     app
-      .route(`${athleteController.ENDPOINT}/likes`)
-      .post(
-        tokenVerify,
-        bodyValidation<LikeAthleteRequest>(LikeAthleteRequest),
-        athleteController.likeAthlete,
-      )
+      .route(`${athleteController.ENDPOINT}/likes/:likedAthleteId`)
+      .post(tokenVerify, athleteController.likeAthlete)
 
     app
-      .route(`${athleteController.ENDPOINT}/dislikes`)
-      .post(
-        tokenVerify,
-        bodyValidation<DislikeAthleteRequest>(DislikeAthleteRequest),
-        athleteController.dislikeAthlete,
-      )
+      .route(`${athleteController.ENDPOINT}/dislikes/:dislikedAthleteId`)
+      .post(tokenVerify, athleteController.dislikeAthlete)
 
     app
       .route(`${athleteController.ENDPOINT}/matching/:matchingId/unlink`)
