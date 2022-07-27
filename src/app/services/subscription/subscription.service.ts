@@ -9,7 +9,10 @@ import {
   Subscription,
   SubscriptionModel,
 } from '@app/model/subscription/Subscription'
+import { AthleteUser } from '@app/model/user/Athlete'
 import { SubscriptionResponse } from '@app/types/response.types'
+import { Model } from 'mongoose'
+import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import stripeService from '../stripe/stripe.service'
 import userService from '../user/user.service'
@@ -22,9 +25,11 @@ import subscriptionPackageService from './subscription-package.service'
  */
 class SubscriptionService {
   private subscription: SubscriptionModel
+  private athlete: Model<any>
 
   constructor() {
     this.subscription = Subscription
+    this.athlete = AthleteUser
   }
 
   /**
@@ -35,7 +40,8 @@ class SubscriptionService {
     foreginRef: string,
     foreginId: string,
   ): Promise<SubscriptionResponse> {
-    await this.checkUserExists(athleteId)
+    const athlete = await this.getAthleteById(athleteId)
+
     const foreginSubscription = await this.getForeginSubscription(foreginId)
 
     const subscriptionPackage = await subscriptionPackageService.getByForeginRef(
@@ -58,6 +64,11 @@ class SubscriptionService {
     })
     await subscription.save()
 
+    athlete.remaningLike = subscriptionPackage.likeLimit
+    athlete.canSeePersonalTrainers = subscriptionPackage.canSeePersonalTrainers
+    athlete.isPremium = subscriptionPackage.canSeePersonalTrainers
+    await athlete.save()
+
     loggerService.info(
       `The Athlete subscribed to a package [userId: ${athleteId}, packageId: ${foreginRef}]`,
     )
@@ -72,6 +83,8 @@ class SubscriptionService {
     athleteId: string,
     foreginKey: string,
   ): Promise<SubscriptionResponse> {
+    const athlete = await this.getAthleteById(athleteId)
+
     const foreginSubscription = await stripeService.getSubscriptionByAthleteAndProduct(
       athleteId,
       foreginKey,
@@ -94,6 +107,11 @@ class SubscriptionService {
       subscription.status = 'INACTIVE'
       await subscription.save()
     }
+
+    athlete.remaningLike = 20
+    athlete.canSeePersonalTrainers = false
+    athlete.isPremium = false
+    await athlete.save()
 
     loggerService.info(
       'The Athlete unsubscribed a package [athleteId: ${athleteId}, foreginKey: ${foreginKey}]',
@@ -133,6 +151,19 @@ class SubscriptionService {
     }
 
     return doesForeginIdExists
+  }
+
+  private async getAthleteById(athleteId: string) {
+    const athlete = await this.athlete.findById(athleteId)
+
+    if (!athlete) {
+      loggerService.warn(
+        `Athlete with the given id doesn't exists [athleteId: ${athleteId}]`,
+      )
+      throw new DocumentNotFound('athlete.notFound')
+    }
+
+    return Promise.resolve(athlete)
   }
 }
 

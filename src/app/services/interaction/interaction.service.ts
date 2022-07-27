@@ -9,6 +9,7 @@ import {
 } from '@app/controllers/athlete/athlete-controller.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
+import { InteractionError } from '@app/exceptions/interaction-error'
 import { InteractionMapper } from '@app/mappers/interaction.mapper'
 import {
   BaseInteraction,
@@ -46,6 +47,9 @@ class InteractionService {
     userId: string,
     likedUserId: string,
   ): Promise<LikeAthleteResponse> {
+    await this.checkInteractionLimit(userId)
+
+    const interactedUser = await this.getAthlete(userId)
     const likedAthlete = await this.getAthlete(likedUserId)
 
     await this.checkDocumentExists(userId, likedUserId, 'LIKED')
@@ -69,6 +73,9 @@ class InteractionService {
       await likedAthlete.save()
     }
 
+    if (interactedUser.likeLimit != null)
+      interactedUser.likeLimit = interactedUser.likeLimit - 1
+
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
     )
@@ -87,6 +94,9 @@ class InteractionService {
     userId: string,
     dislikedUserId: string,
   ): Promise<DislikeAthleteResponse> {
+    await this.checkInteractionLimit(userId)
+
+    const interactedUser = await this.getAthlete(userId)
     const dislikedAthlete = await this.getAthlete(dislikedUserId)
 
     await this.checkDocumentExists(userId, dislikedUserId, 'DISLIKED')
@@ -120,6 +130,9 @@ class InteractionService {
       dislikedAthlete.interactedBy = [...dislikedAthlete.interactedBy, userId]
       await dislikedAthlete.save()
     }
+
+    if (interactedUser.likeLimit != null)
+      interactedUser.likeLimit = interactedUser.likeLimit - 1
 
     loggerService.info(
       `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
@@ -228,6 +241,24 @@ class InteractionService {
       `User with the given id doesn't exists [userId: ${userId}]`,
     )
     throw new DocumentNotFound('user.notFound')
+  }
+
+  private async checkInteractionLimit(athleteId: string) {
+    const athlete = await this.getAthlete(athleteId)
+
+    if (!athlete.likeLimit || !athlete.likeLimit == null) {
+      loggerService.error(
+        `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
+      )
+      throw new InteractionError('interaction.insufficientLimit')
+    }
+
+    if (athlete.likeLimit === 0) {
+      loggerService.error(
+        `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
+      )
+      throw new InteractionError('interaction.insufficientLimit')
+    }
   }
 }
 

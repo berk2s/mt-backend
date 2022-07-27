@@ -33,6 +33,9 @@ export abstract class UserMapper {
       gym: user.gym,
       trainingExperience: user.trainingExperience,
       trainingDays: user.trainingDays,
+      remaningLike: user.remaningLike,
+      canSeePersonalTrainers: user.canSeePersonalTrainers,
+      isPremium: user.isPremium,
     }
   }
 
@@ -50,6 +53,9 @@ export abstract class UserMapper {
         gym: user.gym,
         trainingExperience: user.trainingExperience,
         trainingDays: user.trainingDays,
+        remaningLike: user.remaningLike,
+        canSeePersonalTrainers: user.canSeePersonalTrainers,
+        isPremium: user.isPremium,
       }
     })
   }

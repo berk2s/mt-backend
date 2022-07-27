@@ -11,6 +11,9 @@ export interface AthleteUserDocument extends BaseUserDocument {
   trainingDays: WorkoutDays[]
   interaction: string[]
   interactedBy: []
+  remaningLike: number;
+  canSeePersonalTrainers: boolean
+  isPremium: boolean
 }
 
 const athleteUserSchema = new Schema({
@@ -28,7 +31,23 @@ const athleteUserSchema = new Schema({
       ref: 'User',
       default: []
     }
-  ]
+    ],
+    remaningLike: {
+      type: Number,
+      required: false,
+      default: 20
+    }, 
+    canSeePersonalTrainers: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isPremium: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+
 }, userSchemaOptions)
  
 

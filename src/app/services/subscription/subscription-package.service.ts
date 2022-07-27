@@ -74,8 +74,8 @@ class SubscriptionPackageService {
    */
   public async getByForeginRef(
     foreginRef: string,
-  ): Promise<SubscriptionPackageResponse> {
-    const subscriptionPackage = await this.subscriptionPackage.findOne({
+  ): Promise<PremiumPackageResponse> {
+    const subscriptionPackage = await this.premiumPackage.findOne({
       foreginRef: foreginRef,
     })
 
@@ -86,7 +86,7 @@ class SubscriptionPackageService {
       throw new DocumentNotFound('subscriptionPackage.notFound')
     }
 
-    return Promise.resolve(SubscriptionMapper.packageToDTO(subscriptionPackage))
+    return Promise.resolve(SubscriptionMapper.premiumToDTO(subscriptionPackage))
   }
 
   /**

@@ -96,6 +96,9 @@ export interface GymResponse {
 export interface AthleteResponse extends UserResponse {
   trainingExperience: any
   trainingDays: any
+  remaningLike: number
+  canSeePersonalTrainers: boolean
+  isPremium: boolean
 }
 
 export interface MyChatsResponse {

@@ -30,6 +30,8 @@ class DiscoveryService {
   ): Promise<AthleteResponse[]> {
     const query = await queryParserService.parse(rawQuery)
 
+    // ne = not equal
+    // not in
     const athletes = await this.athleteModel
       .find({
         _id: {

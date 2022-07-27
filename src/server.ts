@@ -31,7 +31,7 @@ const io = new Server(httpServer, {
 })
 
 io.on('connection', (socket) => {
-  loggerService.info(`An socket connection established. [id: ${socket.id}]`)
+  loggerService.info(`A socket connection established. [id: ${socket.id}]`)
 
   socket.on('join', (data) => {
     const { chatId } = data

@@ -30,4 +30,5 @@ export enum ErrorTypes {
   PAYMENT_ERROR = 'payment_error',
   SOCKET_ERROR = 'socket_error',
   UNAUTHORIZED = 'unauthorized',
+  INTERACTION_ERROR = 'interaction_error',
 }
