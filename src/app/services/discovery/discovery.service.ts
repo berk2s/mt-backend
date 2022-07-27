@@ -2,10 +2,12 @@
  * @module app.services.discovery
  */
 
+import { InteractionError } from '@app/exceptions/interaction-error'
 import { UserMapper } from '@app/mappers/user.mapper'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { AthleteResponse } from '@app/types/response.types'
 import { Model, Mongoose, Types } from 'mongoose'
+import loggerService from '../logger/logger-service'
 import queryParserService from '../query-parser/query-parser.service'
 
 /**
@@ -29,6 +31,15 @@ class DiscoveryService {
     userId: string,
   ): Promise<AthleteResponse[]> {
     const query = await queryParserService.parse(rawQuery)
+
+    const athlete = await this.athleteModel.findById(userId)
+
+    if (!athlete.likeLimit || athlete.likeLimit === 0) {
+      loggerService.error(
+        `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
+      )
+      throw new InteractionError('interaction.insufficientLimit')
+    }
 
     // ne = not equal
     // not in
