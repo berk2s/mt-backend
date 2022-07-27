@@ -34,7 +34,7 @@ class DiscoveryService {
 
     const athlete = await this.athleteModel.findById(userId)
 
-    if (!athlete.likeLimit || athlete.likeLimit === 0) {
+    if (athlete.remaningLike == null || athlete.remaningLike === 0) {
       loggerService.error(
         `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
       )

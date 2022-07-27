@@ -73,8 +73,10 @@ class InteractionService {
       await likedAthlete.save()
     }
 
-    if (interactedUser.likeLimit != null)
-      interactedUser.likeLimit = interactedUser.likeLimit - 1
+    if (interactedUser.remaningLike != null) {
+      interactedUser.remaningLike = parseInt(interactedUser.remaningLike) - 1
+      await interactedUser.save()
+    }
 
     loggerService.info(
       `An athlete had send liked interaction to another athlete [userId: ${userId}, toUserId: ${likedUserId}]`,
@@ -130,9 +132,10 @@ class InteractionService {
       dislikedAthlete.interactedBy = [...dislikedAthlete.interactedBy, userId]
       await dislikedAthlete.save()
     }
-
-    if (interactedUser.likeLimit != null)
-      interactedUser.likeLimit = interactedUser.likeLimit - 1
+    if (interactedUser.remaningLike != null) {
+      interactedUser.remaningLike = parseInt(interactedUser.remaningLike) - 1
+      await interactedUser.save()
+    }
 
     loggerService.info(
       `An athlete had send disliked interaction to another athlete [userId: ${userId}, toUserId: ${dislikedUserId}]`,
@@ -246,14 +249,14 @@ class InteractionService {
   private async checkInteractionLimit(athleteId: string) {
     const athlete = await this.getAthlete(athleteId)
 
-    if (!athlete.likeLimit || !athlete.likeLimit == null) {
+    if (!athlete.remaningLike || !athlete.remaningLike == null) {
       loggerService.error(
         `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
       )
       throw new InteractionError('interaction.insufficientLimit')
     }
 
-    if (athlete.likeLimit === 0) {
+    if (athlete.remaningLike === 0) {
       loggerService.error(
         `The athlete has reached the like limit. [athleteId: ${athlete._id}]`,
       )
