@@ -14,6 +14,7 @@ export interface AthleteUserDocument extends BaseUserDocument {
   remaningLike: number;
   canSeePersonalTrainers: boolean
   isPremium: boolean
+  location: any
 }
 
 const athleteUserSchema = new Schema({
@@ -25,7 +26,7 @@ const athleteUserSchema = new Schema({
       ref: 'Interaction',
     }
    ],
-   interactedBy: [
+    interactedBy: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -46,9 +47,22 @@ const athleteUserSchema = new Schema({
       type: Boolean,
       required: false,
       default: false
+    },
+    location: {
+      type: {
+        type: String, 
+        enum: ['Point'], 
+        required: true
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      }
     }
 
 }, userSchemaOptions)
  
+athleteUserSchema.index({ location: '2dsphere' })
 
 export const AthleteUser = BaseUser.discriminator<AthleteUserDocument>('ATHLETE', athleteUserSchema);
+

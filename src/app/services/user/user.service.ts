@@ -50,6 +50,8 @@ class UserService {
       languages,
       trainingDays,
       trainingExperience,
+      lat,
+      lng,
     } = registerUser
 
     await this.checkEmailTaken(email)
@@ -63,6 +65,13 @@ class UserService {
       languages,
       trainingExperience,
       trainingDays,
+      location: {
+        type: 'Point',
+        coordinates:
+          lat && lng
+            ? [parseFloat(lat + '').toFixed(6), parseFloat(lng + '').toFixed(6)]
+            : [0.0, 0.0],
+      },
     })
 
     await athlete.save()
@@ -205,6 +214,32 @@ class UserService {
     }
 
     return Promise.resolve(UserMapper.baseUsertoDTO(user))
+  }
+
+  /**
+   * Updates the geo location of the athlete
+   */
+  public async updateLocation(
+    athleteId: string,
+    lat: number,
+    lng: number,
+  ): Promise<AthleteResponse> {
+    const updateAthleteLocation = await this.athleteModel.findById(athleteId)
+
+    updateAthleteLocation.location = {
+      type: 'Point',
+      coordinates: [
+        parseFloat(lat + '').toFixed(6),
+        parseFloat(lng + '').toFixed(6),
+      ],
+    }
+    await updateAthleteLocation.save()
+
+    loggerService.info(
+      `The athete's location is updated [athleteId: ${athleteId}]`,
+    )
+
+    return Promise.resolve(updateAthleteLocation)
   }
 
   private async checkGymExists(gymId: string) {

@@ -41,8 +41,15 @@ class DiscoveryService {
       throw new InteractionError('interaction.insufficientLimit')
     }
 
-    // ne = not equal
-    // not in
+    const distance = query.filter.distance
+
+    const filterWithoutDistance = Object.keys(query.filter)
+      .filter((key) => key !== 'distance')
+      .reduce((obj, key) => {
+        obj[key] = query.filter[key]
+        return obj
+      }, {})
+
     const athletes = await this.athleteModel
       .find({
         _id: {
@@ -51,7 +58,19 @@ class DiscoveryService {
         interactedBy: {
           $nin: [new Types.ObjectId(userId)],
         },
-        ...query.filter,
+        ...filterWithoutDistance,
+        ...(distance && {
+          location: {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [...athlete.location.coordinates],
+              },
+              //    $minDistance: 1000,
+              $maxDistance: distance * 1000,
+            },
+          },
+        }),
       })
       .limit(2)
 

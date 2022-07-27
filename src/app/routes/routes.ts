@@ -6,10 +6,9 @@ import { Application } from 'express'
 import healthController from '@app/controllers/health/health.controller'
 import { bodyValidation } from '@app/middlewares/body-validation.middleware'
 import {
-  DislikeAthleteRequest,
-  LikeAthleteRequest,
   RegisterAthleteRequest,
   UpdateAthleteRequest,
+  UpdateGEOLocation,
 } from '@app/controllers/athlete/athlete-controller.types'
 import athleteController from '@app/controllers/athlete/athlete.controller'
 import uploadMiddleware from '@app/middlewares/image-upload.middleware'
@@ -154,6 +153,14 @@ export class Routes {
     app
       .route(`${subscriptionController.ENDPOINT}/packages/premiums`)
       .get(tokenVerify, subscriptionController.getPremiumPackages)
+
+    app
+      .route(`${athleteController.ENDPOINT}/geolocation`)
+      .put(
+        tokenVerify,
+        bodyValidation<UpdateGEOLocation>(UpdateGEOLocation),
+        athleteController.updateGeoLocation,
+      )
   }
 }
 

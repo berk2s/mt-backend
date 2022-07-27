@@ -14,6 +14,7 @@ import {
   RegisterAthleteRequest,
   UnlinkMatchingRequest,
   UpdateAthleteRequest,
+  UpdateGEOLocation,
 } from './athlete-controller.types'
 
 /**
@@ -140,6 +141,29 @@ class AthleteController {
       const athlete = await userService.updateAthlete(userId, req.bodyDto)
 
       res.status(200).json(athlete)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles update geo location request
+   */
+  public async updateGeoLocation(
+    req: IncomingRequest<UpdateGEOLocation>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const updatedLocation = await userService.updateLocation(
+        userId,
+        req.bodyDto.lat,
+        req.bodyDto.lng,
+      )
+
+      return res.status(200).json(updatedLocation)
     } catch (err) {
       next(err)
     }

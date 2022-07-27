@@ -91,6 +91,9 @@ export class RegisterAthleteRequest extends BodyDTO {
   })
   @Expose()
   trainingExperience?: Experience
+
+  lat: number
+  lng: number
 }
 
 export class LikeAthleteRequest extends BodyDTO {}
@@ -184,4 +187,18 @@ export class UpdateAthleteRequest extends BodyDTO {
   })
   @Expose()
   trainingExperience?: Experience
+}
+
+export class UpdateGEOLocation extends BodyDTO {
+  @IsDefined({
+    message: 'lat.empty',
+  })
+  @Expose()
+  lat: number
+
+  @IsDefined({
+    message: 'lng.empty',
+  })
+  @Expose()
+  lng: number
 }
