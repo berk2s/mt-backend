@@ -22,7 +22,7 @@ export class UnsubscribeRequest extends BodyDTO {
 
 export class CreatePremiumPackageRequest extends BodyDTO {
   @IsDefined({
-    message: 'productName.empty',
+    message: 'packageName.empty',
   })
   @Length(1, 100, {
     message: 'packageName.invalid',

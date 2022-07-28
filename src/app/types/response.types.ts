@@ -114,3 +114,8 @@ export interface MyChatsResponse {
   status?: string
   createdAt?: Date
 }
+
+export interface PTPackageResponse extends SubscriptionPackageResponse {
+  workoutType: string[]
+  personalTrainer: string
+}

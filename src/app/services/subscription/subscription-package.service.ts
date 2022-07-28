@@ -2,6 +2,7 @@
  * @module app.services.subscription
  */
 
+import { CreatePTPackageRequest } from '@app/controllers/personal-trainer/personal-trainer.types'
 import { CreatePremiumPackageRequest } from '@app/controllers/subscriptions/subscription-controller.types'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { SubscriptionMapper } from '@app/mappers/subscription.mapper'
@@ -10,8 +11,10 @@ import {
   SubscriptionPackage,
 } from '@app/model/subscription/Package'
 import { PremiumPackage } from '@app/model/subscription/PremiumPackage'
+import { PTPackage } from '@app/model/subscription/PTPackage'
 import {
   PremiumPackageResponse,
+  PTPackageResponse,
   SubscriptionPackageResponse,
 } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
@@ -19,6 +22,7 @@ import { RandomUtility } from '@app/utilities/random-utility'
 import { Model } from 'mongoose'
 import loggerService from '../logger/logger-service'
 import stripeService from '../stripe/stripe.service'
+import userService from '../user/user.service'
 
 /**
  * Subscription Package service
@@ -148,6 +152,71 @@ class SubscriptionPackageService {
     const packages = await this.premiumPackage.find()
 
     return Promise.resolve(SubscriptionMapper.packagesToDTO(packages))
+  }
+
+  /**
+   * Creates Personal Trainer Package
+   */
+  public async createPTPackage(
+    userId: string,
+    req: CreatePTPackageRequest,
+  ): Promise<PTPackageResponse> {
+    await this.checkPTExists(userId)
+
+    const {
+      packageName,
+      packageDescription,
+      unitAmonut,
+      currency,
+      subscriptionInterval,
+      workoutType,
+    } = req
+
+    const product = await stripeService.createProduct(packageName)
+
+    const lookupKey = RandomUtility.randomString(48)
+
+    const price = await stripeService.createPrice({
+      unit_amount: unitAmonut,
+      currency: currency,
+      recurring: {
+        interval: subscriptionInterval,
+      },
+      product: product.id,
+      lookup_key: lookupKey,
+    })
+
+    const ptPackage = new PTPackage({
+      packageName: packageName,
+      packageDescription: packageDescription,
+      period: subscriptionInterval,
+      price: unitAmonut,
+      currency: currency,
+      foreginProductId: product.id,
+      foreginPriceId: price.id,
+      foreginRef: lookupKey,
+      workoutType: workoutType,
+      personalTrainer: userId,
+    })
+
+    await ptPackage.save()
+
+    loggerService.info(
+      `A Personal Trainer subscription package created [packageName: ${packageName}]`,
+    )
+
+    return Promise.resolve(SubscriptionMapper.ptPackagetoDTO(ptPackage))
+  }
+
+  private async checkPTExists(ptId: string) {
+    const exists = await userService.existsById(ptId)
+
+    if (!exists) {
+      loggerService.warn(
+        `Personal trainer with the given id doens't exists [ptId: ${ptId}]`,
+      )
+      throw new DocumentNotFound('personalTrainer.notFound')
+    }
   }
 }
 

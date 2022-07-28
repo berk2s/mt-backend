@@ -27,7 +27,10 @@ import gymController from '@app/controllers/gym/gym.controller'
 import { CreateGymRequest } from '@app/controllers/gym/gym-controller.typs'
 import discoveryController from '@app/controllers/discovery/discovery.controller'
 import personalTrainerController from '@app/controllers/personal-trainer/personal-trainer.controller'
-import { RegisterPersonalTrainer } from '@app/controllers/personal-trainer/personal-trainer.types'
+import {
+  CreatePTPackageRequest,
+  RegisterPersonalTrainer,
+} from '@app/controllers/personal-trainer/personal-trainer.types'
 
 /**
  * Creates and configures routes that belongs to application
@@ -177,6 +180,14 @@ export class Routes {
         tokenVerify,
         uploadMiddleware.any('certificates'),
         personalTrainerController.addCertificates,
+      )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/packages`)
+      .post(
+        tokenVerify,
+        bodyValidation<CreatePTPackageRequest>(CreatePTPackageRequest),
+        personalTrainerController.createPTPackage,
       )
   }
 }

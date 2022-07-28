@@ -4,11 +4,13 @@
 
 import { InvalidRequest } from '@app/exceptions/invalid-request-error'
 import loggerService from '@app/services/logger/logger-service'
+import subscriptionPackageService from '@app/services/subscription/subscription-package.service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
 import { NextFunction, Response } from 'express'
 import {
   AddCertificateImagesRequest,
+  CreatePTPackageRequest,
   RegisterPersonalTrainer,
 } from './personal-trainer.types'
 
@@ -37,6 +39,9 @@ class PersonalTrainerController {
     }
   }
 
+  /**
+   * Handles add certificate image request
+   */
   public async addCertificates(
     req: IncomingRequest<AddCertificateImagesRequest>,
     res: Response,
@@ -56,6 +61,28 @@ class PersonalTrainerController {
       )
 
       res.status(200).send(updatedPersonalTrainer)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles create personal trainer package request
+   */
+  public async createPTPackage(
+    req: IncomingRequest<CreatePTPackageRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const ptPackage = await subscriptionPackageService.createPTPackage(
+        userId,
+        req.bodyDto,
+      )
+
+      return res.status(201).json(ptPackage)
     } catch (err) {
       next(err)
     }

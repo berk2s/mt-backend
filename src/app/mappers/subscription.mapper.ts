@@ -4,9 +4,11 @@
 
 import { SubscriptionPackageDocument } from '@app/model/subscription/Package'
 import { PremiumPackageDocument } from '@app/model/subscription/PremiumPackage'
+import { PTPackageDocument } from '@app/model/subscription/PTPackage'
 import { SubscriptionDocument } from '@app/model/subscription/Subscription'
 import {
   PremiumPackageResponse,
+  PTPackageResponse,
   SubscriptionPackageResponse,
   SubscriptionResponse,
 } from '@app/types/response.types'
@@ -72,6 +74,26 @@ export abstract class SubscriptionMapper {
         ...SubscriptionMapper.packageToDTO(i),
         likeLimit: i.likeLimit,
         canSeePersonalTrainers: i.canSeePersonalTrainers,
+      }
+    })
+  }
+
+  public static ptPackagetoDTO(document: PTPackageDocument): PTPackageResponse {
+    return {
+      ...SubscriptionMapper.packageToDTO(document),
+      workoutType: document.workoutType,
+      personalTrainer: document.personalTrainer,
+    }
+  }
+
+  public static ptPackagestoDTO(
+    documents: PTPackageDocument[],
+  ): PTPackageResponse[] {
+    return documents.map((i) => {
+      return {
+        ...SubscriptionMapper.packageToDTO(i),
+        workoutType: i.workoutType,
+        personalTrainer: i.personalTrainer,
       }
     })
   }
