@@ -22,6 +22,7 @@ export abstract class UserMapper {
       gender: user.sex,
       languages: user.languages,
       gym: user.gym,
+      userType: user.userType,
     }
   }
 

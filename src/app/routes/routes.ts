@@ -198,6 +198,10 @@ export class Routes {
         bodyValidation<PTInfoRequest>(PTInfoRequest),
         personalTrainerController.getPTInfo,
       )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}`)
+      .get(tokenVerify, personalTrainerController.getPersonalTrainers)
   }
 }
 

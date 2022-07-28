@@ -7,7 +7,7 @@ import loggerService from '@app/services/logger/logger-service'
 import subscriptionPackageService from '@app/services/subscription/subscription-package.service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
-import { NextFunction, Response } from 'express'
+import { NextFunction, Response, Request } from 'express'
 import {
   AddCertificateImagesRequest,
   CreatePTPackageRequest,
@@ -103,6 +103,23 @@ class PersonalTrainerController {
       const ptInfo = await userService.getPTInfo(userId)
 
       return res.status(200).json(ptInfo)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles all personal trainers request
+   */
+  public async getPersonalTrainers(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const personalTrainers = await userService.getPersonalTrainers()
+
+      return res.status(200).json(personalTrainers)
     } catch (err) {
       next(err)
     }

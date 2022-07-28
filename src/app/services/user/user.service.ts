@@ -338,6 +338,15 @@ class UserService {
     return Promise.resolve(UserMapper.personalTrainerToDTO(personalTrainer))
   }
 
+  /**
+   * Gets all personal trainers
+   */
+  public async getPersonalTrainers(): Promise<PTResponse[]> {
+    const personalTrainers = await this.ptModel.find()
+
+    return Promise.resolve(UserMapper.personalTrainersToDTO(personalTrainers))
+  }
+
   private async checkGymExists(gymId: string) {
     const gym = await gymService.getById(gymId)
 

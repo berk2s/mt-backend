@@ -15,6 +15,7 @@ export interface UserResponse {
   experience?: Experience
   imageUrl?: string
   gym?: string
+  userType?: string
 }
 
 export interface MatchingResponse {
