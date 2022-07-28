@@ -10,6 +10,7 @@ import { TokenResponse } from '@app/controllers/login/login-controller.types'
 import { RegisterPersonalTrainer } from '@app/controllers/personal-trainer/personal-trainer.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
+import { UnauthorizedError } from '@app/exceptions/unauthorized-error'
 import { UserMapper } from '@app/mappers/user.mapper'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
@@ -341,7 +342,23 @@ class UserService {
   /**
    * Gets all personal trainers
    */
-  public async getPersonalTrainers(): Promise<PTResponse[]> {
+  public async getPersonalTrainers(athleteId: string): Promise<PTResponse[]> {
+    const athlete = await this.athleteModel.findById(athleteId)
+
+    if (!athlete) {
+      loggerService.warn(
+        `Athlete with the given id doesn't exists [athleteId: ${athleteId}]`,
+      )
+      throw new DocumentNotFound('athlete.notFound')
+    }
+
+    if (!athlete.canSeePersonalTrainers) {
+      loggerService.warn(
+        `Athlete tried to see personal trainers but not subscribed [athleteId: ${athleteId}]`,
+      )
+      throw new UnauthorizedError('athlete.unsubscribed')
+    }
+
     const personalTrainers = await this.ptModel.find()
 
     return Promise.resolve(UserMapper.personalTrainersToDTO(personalTrainers))

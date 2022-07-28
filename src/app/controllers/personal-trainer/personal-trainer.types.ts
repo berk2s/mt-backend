@@ -125,3 +125,5 @@ export class UpdatePTPackageRequest extends BodyDTO {
   @Expose()
   workoutType: string[]
 }
+
+export class PTListRequest extends BodyDTO {}

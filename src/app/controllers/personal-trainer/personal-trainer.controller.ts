@@ -12,6 +12,7 @@ import {
   AddCertificateImagesRequest,
   CreatePTPackageRequest,
   PTInfoRequest,
+  PTListRequest,
   RegisterPersonalTrainer,
   UpdatePTPackageRequest,
 } from './personal-trainer.types'
@@ -113,12 +114,13 @@ class PersonalTrainerController {
    * Handles all personal trainers request
    */
   public async getPersonalTrainers(
-    req: Request,
+    req: IncomingRequest<PTListRequest>,
     res: Response,
     next: NextFunction,
   ) {
     try {
-      const personalTrainers = await userService.getPersonalTrainers()
+      const { userId } = req
+      const personalTrainers = await userService.getPersonalTrainers(userId)
 
       return res.status(200).json(personalTrainers)
     } catch (err) {
