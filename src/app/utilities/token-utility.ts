@@ -6,10 +6,11 @@ import tokenConfig from '@app/config/token.config'
 import { TokenResponse } from '@app/controllers/login/login-controller.types'
 import { AthleteUserDocument } from '@app/model/user/Athlete'
 import { BaseUserDocument } from '@app/model/user/BaseUser'
+import { PersonalTrainerDocument } from '@app/model/user/PersonalTrainer'
 
 export abstract class TokenUtility {
   public static generatePayload(
-    user: BaseUserDocument | AthleteUserDocument,
+    user: BaseUserDocument | AthleteUserDocument | PersonalTrainerDocument,
   ): any {
     return {
       userId: user._id,

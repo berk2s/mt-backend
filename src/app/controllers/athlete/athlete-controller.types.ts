@@ -10,12 +10,8 @@ import {
   Length,
   Validate,
 } from 'class-validator'
-import { ObjectIdValidator } from '@app/validation/ObjectIdValidator'
 
-/**
- * Register User DTO
- */
-export class RegisterAthleteRequest extends BodyDTO {
+export class RegisterUserRequest extends BodyDTO {
   @IsDefined({
     message: 'fullName.empty',
   })
@@ -72,7 +68,12 @@ export class RegisterAthleteRequest extends BodyDTO {
   })
   @Expose()
   languages?: string[]
+}
 
+/**
+ * Register User DTO
+ */
+export class RegisterAthleteRequest extends RegisterUserRequest {
   @IsDefined({
     message: 'trainingDays.empty',
   })

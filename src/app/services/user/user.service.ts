@@ -7,11 +7,13 @@ import {
   UpdateAthleteRequest,
 } from '@app/controllers/athlete/athlete-controller.types'
 import { TokenResponse } from '@app/controllers/login/login-controller.types'
+import { RegisterPersonalTrainer } from '@app/controllers/personal-trainer/personal-trainer.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UserMapper } from '@app/mappers/user.mapper'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
+import { PersonalTrainerUser } from '@app/model/user/PersonalTrainer'
 import { AthleteResponse, UserResponse } from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { TokenUtility } from '@app/utilities/token-utility'
@@ -240,6 +242,50 @@ class UserService {
     )
 
     return Promise.resolve(updateAthleteLocation)
+  }
+
+  /**
+   * Register personal trainer
+   */
+  public async registerPersonalTrainer(
+    req: RegisterPersonalTrainer,
+  ): Promise<TokenResponse> {
+    const {
+      fullName,
+      email,
+      password,
+      birthday,
+      gender,
+      languages,
+      yearsOfExperience,
+      gym,
+      iban,
+    } = req
+
+    await this.checkEmailTaken(email)
+
+    const personalTrainer = new PersonalTrainerUser({
+      fullName,
+      email,
+      passwordHash: password,
+      birthDate: birthday,
+      sex: gender,
+      languages,
+      iban,
+      yearsOfExperience,
+    })
+
+    await personalTrainer.save()
+
+    loggerService.info(
+      `Personal trainer succesfully created [ptId: ${personalTrainer._id}]`,
+    )
+
+    const token = await jwtService.generate(
+      TokenUtility.generatePayload(personalTrainer),
+    )
+
+    return TokenUtility.generateResponse(token)
   }
 
   private async checkGymExists(gymId: string) {
