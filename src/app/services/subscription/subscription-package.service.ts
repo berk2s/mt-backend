@@ -2,7 +2,10 @@
  * @module app.services.subscription
  */
 
-import { CreatePTPackageRequest } from '@app/controllers/personal-trainer/personal-trainer.types'
+import {
+  CreatePTPackageRequest,
+  UpdatePTPackageRequest,
+} from '@app/controllers/personal-trainer/personal-trainer.types'
 import { CreatePremiumPackageRequest } from '@app/controllers/subscriptions/subscription-controller.types'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { SubscriptionMapper } from '@app/mappers/subscription.mapper'
@@ -32,10 +35,12 @@ import userService from '../user/user.service'
 class SubscriptionPackageService {
   private subscriptionPackage: SubscriptionPackageModel
   private premiumPackage: Model<any>
+  private ptPackage: Model<any>
 
   constructor() {
     this.subscriptionPackage = SubscriptionPackage
     this.premiumPackage = PremiumPackage
+    this.ptPackage = PTPackage
   }
 
   /**
@@ -203,6 +208,47 @@ class SubscriptionPackageService {
 
     loggerService.info(
       `A Personal Trainer subscription package created [packageName: ${packageName}]`,
+    )
+
+    return Promise.resolve(SubscriptionMapper.ptPackagetoDTO(ptPackage))
+  }
+
+  /**
+   * Updates personal trainer package
+   */
+  public async updatePTPackage(
+    packageId: string,
+    req: UpdatePTPackageRequest,
+  ): Promise<PTPackageResponse> {
+    const {
+      packageName,
+      packageDescription,
+      unitAmonut,
+      currency,
+      subscriptionInterval,
+      workoutType,
+    } = req
+
+    const ptPackage = await this.ptPackage.findById(packageId)
+
+    if (!ptPackage) {
+      loggerService.warn(
+        `Personal trainer package with the given id doesn't exists [packageId: ${packageId}]`,
+      )
+      throw new DocumentNotFound('package.notFound')
+    }
+
+    ptPackage.packageName = packageName
+    ptPackage.packageDescription = packageDescription
+    ptPackage.unitAmonut = unitAmonut
+    ptPackage.currency = currency
+    ptPackage.subscriptionInterval = subscriptionInterval
+    ptPackage.workoutType = workoutType
+
+    await ptPackage.save()
+
+    loggerService.info(
+      `Personal trainer package updated [packateId: ${packageId}]`,
     )
 
     return Promise.resolve(SubscriptionMapper.ptPackagetoDTO(ptPackage))

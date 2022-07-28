@@ -31,6 +31,7 @@ import {
   CreatePTPackageRequest,
   PTInfoRequest,
   RegisterPersonalTrainer,
+  UpdatePTPackageRequest,
 } from '@app/controllers/personal-trainer/personal-trainer.types'
 
 /**
@@ -202,6 +203,14 @@ export class Routes {
     app
       .route(`${personalTrainerController.ENDPOINT}`)
       .get(tokenVerify, personalTrainerController.getPersonalTrainers)
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/packages/:packageId`)
+      .put(
+        tokenVerify,
+        bodyValidation<UpdatePTPackageRequest>(UpdatePTPackageRequest),
+        personalTrainerController.updatePTPackage,
+      )
   }
 }
 

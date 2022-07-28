@@ -13,6 +13,7 @@ import {
   CreatePTPackageRequest,
   PTInfoRequest,
   RegisterPersonalTrainer,
+  UpdatePTPackageRequest,
 } from './personal-trainer.types'
 
 /**
@@ -120,6 +121,28 @@ class PersonalTrainerController {
       const personalTrainers = await userService.getPersonalTrainers()
 
       return res.status(200).json(personalTrainers)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Update personal trainer package
+   */
+  public async updatePTPackage(
+    req: IncomingRequest<UpdatePTPackageRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { packageId } = req.params
+
+      const updatedPackage = await subscriptionPackageService.updatePTPackage(
+        packageId,
+        req.bodyDto,
+      )
+
+      return res.status(200).json(updatedPackage)
     } catch (err) {
       next(err)
     }

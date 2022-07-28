@@ -78,3 +78,50 @@ export class CreatePTPackageRequest extends BodyDTO {
 }
 
 export class PTInfoRequest extends BodyDTO {}
+
+export class UpdatePTPackageRequest extends BodyDTO {
+  @IsDefined({
+    message: 'packageName.empty',
+  })
+  @Length(1, 100, {
+    message: 'packageName.invalid',
+  })
+  @Expose()
+  packageName: string
+
+  @IsDefined({
+    message: 'packageDescription.empty',
+  })
+  @Length(1, 100, {
+    message: 'packageDescription.invalid',
+  })
+  @Expose()
+  packageDescription: string
+
+  @IsDefined({
+    message: 'productPrice.empty',
+  })
+  @Min(1, {
+    message: 'productPrice.invalid',
+  })
+  @Expose()
+  unitAmonut: number
+
+  @IsDefined({
+    message: 'currency.empty',
+  })
+  @Expose()
+  currency: string
+
+  @IsDefined({
+    message: 'subscriptionInterval.empty',
+  })
+  @Expose()
+  subscriptionInterval: string
+
+  @IsDefined({
+    message: 'workoutType.empty',
+  })
+  @Expose()
+  workoutType: string[]
+}
