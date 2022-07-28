@@ -84,8 +84,8 @@ class SubscriptionPackageService {
    */
   public async getByForeginRef(
     foreginRef: string,
-  ): Promise<PremiumPackageResponse> {
-    const subscriptionPackage = await this.premiumPackage.findOne({
+  ): Promise<SubscriptionPackageResponse> {
+    const subscriptionPackage = await this.subscriptionPackage.findOne({
       foreginRef: foreginRef,
     })
 
@@ -96,7 +96,49 @@ class SubscriptionPackageService {
       throw new DocumentNotFound('subscriptionPackage.notFound')
     }
 
+    return Promise.resolve(SubscriptionMapper.packageToDTO(subscriptionPackage))
+  }
+
+  /**
+   * Gets subscription package by foregin ref
+   */
+  public async getPremiumPackageByForeginRef(
+    foreginRef: string,
+  ): Promise<PremiumPackageResponse> {
+    const subscriptionPackage = await this.premiumPackage.findOne({
+      foreginRef: foreginRef,
+    })
+
+    if (!subscriptionPackage) {
+      loggerService.warn(
+        `Premium Package with the given ref doesn't exists [foreginRef: ${foreginRef}]`,
+      )
+      throw new DocumentNotFound('subscriptionPackage.notFound')
+    }
+
     return Promise.resolve(SubscriptionMapper.premiumToDTO(subscriptionPackage))
+  }
+
+  /**
+   * Gets subscription package by foregin ref
+   */
+  public async getPTPackageByForeginRef(
+    foreginRef: string,
+  ): Promise<PTPackageResponse> {
+    const subscriptionPackage = await this.ptPackage.findOne({
+      foreginRef: foreginRef,
+    })
+
+    if (!subscriptionPackage) {
+      loggerService.warn(
+        `PT Package with the given ref doesn't exists [foreginRef: ${foreginRef}]`,
+      )
+      throw new DocumentNotFound('subscriptionPackage.notFound')
+    }
+
+    return Promise.resolve(
+      SubscriptionMapper.ptPackagetoDTO(subscriptionPackage),
+    )
   }
 
   /**

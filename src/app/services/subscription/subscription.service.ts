@@ -13,6 +13,7 @@ import { AthleteUser } from '@app/model/user/Athlete'
 import { SubscriptionResponse } from '@app/types/response.types'
 import { Model } from 'mongoose'
 import { loggers } from 'winston'
+import chatService from '../chat/chat.service'
 import loggerService from '../logger/logger-service'
 import stripeService from '../stripe/stripe.service'
 import userService from '../user/user.service'
@@ -64,14 +65,35 @@ class SubscriptionService {
     })
     await subscription.save()
 
-    athlete.remaningLike = subscriptionPackage.likeLimit
-    athlete.canSeePersonalTrainers = subscriptionPackage.canSeePersonalTrainers
-    athlete.isPremium = subscriptionPackage.canSeePersonalTrainers
-    await athlete.save()
+    if (subscriptionPackage.packageType === 'PREMIUM_PACKAGE') {
+      const premiumPackage = await subscriptionPackageService.getPremiumPackageByForeginRef(
+        foreginRef,
+      )
 
-    loggerService.info(
-      `The Athlete subscribed to a package [userId: ${athleteId}, packageId: ${foreginRef}]`,
-    )
+      athlete.remaningLike = premiumPackage.likeLimit
+      athlete.canSeePersonalTrainers = premiumPackage.canSeePersonalTrainers
+      athlete.isPremium = premiumPackage.canSeePersonalTrainers
+      await athlete.save()
+
+      loggerService.info(
+        `The Athlete subscribed to a premium package [userId: ${athleteId}, packageId: ${foreginRef}]`,
+      )
+    } else if (subscriptionPackage.packageType === 'PT_PACKAGE') {
+      athlete.canSeePersonalTrainers = true
+      await athlete.save()
+
+      const ptPackage = await subscriptionPackageService.getPTPackageByForeginRef(
+        foreginRef,
+      )
+
+      const personalTrainerId = ptPackage.personalTrainer
+
+      await chatService.create([athlete._id, personalTrainerId])
+
+      loggerService.info(
+        `The Athlete subscribed to a personal trainer package [userId: ${athleteId}, packageId: ${foreginRef}]`,
+      )
+    }
 
     return Promise.resolve(SubscriptionMapper.subscribeToDTO(subscription))
   }
