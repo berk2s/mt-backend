@@ -14,12 +14,16 @@ import {
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UnauthorizedError } from '@app/exceptions/unauthorized-error'
+import { SubscriptionMapper } from '@app/mappers/subscription.mapper'
 import { UserMapper } from '@app/mappers/user.mapper'
+import { SubscriptionPackage } from '@app/model/subscription/Package'
+import { PTPackage } from '@app/model/subscription/PTPackage'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
 import { PersonalTrainerUser } from '@app/model/user/PersonalTrainer'
 import {
   AthleteResponse,
+  PTPackageResponse,
   PTResponse,
   UserResponse,
 } from '@app/types/response.types'
@@ -40,11 +44,13 @@ class UserService {
   private baseUserModel: BaseUserModel
   private athleteModel: Model<any>
   private ptModel: Model<any>
+  private ptPackage: Model<any>
 
   constructor() {
     this.baseUserModel = BaseUser
     this.athleteModel = AthleteUser
     this.ptModel = PersonalTrainerUser
+    this.ptPackage = PTPackage
   }
 
   /**
@@ -407,6 +413,26 @@ class UserService {
     loggerService.info(`Personal trainer updated [personalTrainerId: ${ptId}]`)
 
     return Promise.resolve(UserMapper.personalTrainerToDTO(pt))
+  }
+
+  /**
+   * Gets packages belongs to the personal trainer
+   */
+  public async getMyPackages(ptId: string): Promise<PTPackageResponse[]> {
+    const pt = await this.ptModel.findById(ptId)
+
+    if (!pt) {
+      loggerService.warn(
+        `Personal trainer with the given id doesn't exists [personalTrainerId: ${ptId}]`,
+      )
+      throw new DocumentNotFound('personalTrainer.notFound')
+    }
+
+    const packages = await this.ptPackage.find({
+      personalTrainer: ptId,
+    })
+
+    return Promise.resolve(SubscriptionMapper.ptPackagestoDTO(packages))
   }
 
   private async checkGymExists(gymId: string) {

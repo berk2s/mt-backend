@@ -213,3 +213,5 @@ export class UpdatePTRequest extends BodyDTO {
   @Expose()
   deletedCerfImages: string[]
 }
+
+export class MyPackagesRequest extends BodyDTO {}

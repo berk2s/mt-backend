@@ -12,6 +12,7 @@ import { NextFunction, Response, Request, RequestHandler } from 'express'
 import {
   AddCertificateImagesRequest,
   CreatePTPackageRequest,
+  MyPackagesRequest,
   PTInfoRequest,
   PTListRequest,
   RegisterPersonalTrainer,
@@ -185,6 +186,25 @@ class PersonalTrainerController {
       const personalTrainer = await userService.updatePT(userId, req.bodyDto)
 
       return res.status(200).json(personalTrainer)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles get my package request
+   */
+  public async getMyPackages(
+    req: IncomingRequest<MyPackagesRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const packages = await userService.getMyPackages(userId)
+
+      return res.status(200).json(packages)
     } catch (err) {
       next(err)
     }
