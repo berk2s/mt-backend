@@ -151,17 +151,6 @@ class SubscriptionService {
     )
   }
 
-  private async checkUserExists(userId: string) {
-    const doesUserExist = await userService.existsById(userId)
-
-    if (!doesUserExist) {
-      loggerService.warn(
-        `User with the given id doesn't exists [userId: ${userId}]`,
-      )
-      throw new DocumentNotFound('user.notFound')
-    }
-  }
-
   private async getForeginSubscription(foreginId: string) {
     const doesForeginIdExists = await stripeService.getSubscriptionById(
       foreginId,
