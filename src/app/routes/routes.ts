@@ -141,7 +141,7 @@ export class Routes {
         athleteController.updateAthlete,
       )
 
-    app.route(gymController.ENDPOINT).get(tokenVerify, gymController.gyms)
+    app.route(gymController.ENDPOINT).get(gymController.gyms)
 
     app
       .route(`${userController.ENDPOINT}/me`)
