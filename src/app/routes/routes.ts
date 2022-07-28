@@ -170,6 +170,14 @@ export class Routes {
         bodyValidation<RegisterPersonalTrainer>(RegisterPersonalTrainer),
         personalTrainerController.registerPersonalTrainer,
       )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/certificates`)
+      .put(
+        tokenVerify,
+        uploadMiddleware.any('certificates'),
+        personalTrainerController.addCertificates,
+      )
   }
 }
 

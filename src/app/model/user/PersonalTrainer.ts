@@ -17,7 +17,7 @@ const personalTrainerUserSchema = new Schema(
       type: String,
       required: true,
     },
-    certificates: { type: String, required: false },
+    certificates: { type: Array<String>, required: false, default: [] },
     iban: { type: String, required: true },
   },
   userSchemaOptions,

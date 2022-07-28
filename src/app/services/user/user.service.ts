@@ -31,10 +31,12 @@ import loggerService from '../logger/logger-service'
 class UserService {
   private baseUserModel: BaseUserModel
   private athleteModel: Model<any>
+  private ptModel: Model<any>
 
   constructor() {
     this.baseUserModel = BaseUser
     this.athleteModel = AthleteUser
+    this.ptModel = PersonalTrainerUser
   }
 
   /**
@@ -286,6 +288,41 @@ class UserService {
     )
 
     return TokenUtility.generateResponse(token)
+  }
+
+  /**
+   * Adds certificate images
+   */
+  public async addCertificateImage(
+    userId: string,
+    files: any,
+  ): Promise<UserResponse> {
+    if (!ObjectIdUtility.isValid(userId)) {
+      loggerService.warn(`Given object id is invalid [id: ${userId}]`)
+      throw new DocumentNotFound('user.notFound')
+    }
+
+    const pt = await this.ptModel.findById(userId)
+
+    if (!pt) {
+      loggerService.warn(
+        `Personal trainer with given ID does not exists [userId: ${userId}]`,
+      )
+      throw new DocumentNotFound('user.notFound')
+    }
+
+    files.forEach(async (file) => {
+      const fileName = await imageService.save(file.buffer)
+
+      pt.certificates = [...pt.certificates, fileName]
+      await pt.save()
+    })
+
+    loggerService.info(
+      `Certificate images has been updated. [userId: ${pt._id}]`,
+    )
+
+    return Promise.resolve(UserMapper.baseUsertoDTO(pt))
   }
 
   private async checkGymExists(gymId: string) {

@@ -1,3 +1,4 @@
+import { BodyDTO } from '@app/types/controller.types'
 import { Expose } from 'class-transformer'
 import { IsDefined, Min } from 'class-validator'
 import { RegisterUserRequest } from '../athlete/athlete-controller.types'
@@ -23,4 +24,8 @@ export class RegisterPersonalTrainer extends RegisterUserRequest {
   })
   @Expose()
   iban: string
+}
+
+export interface AddCertificateImagesRequest extends BodyDTO {
+  files: any
 }
