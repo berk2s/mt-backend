@@ -237,6 +237,16 @@ export class Routes {
     app
       .route(`${personalTrainerController.ENDPOINT}/packages/:packageId`)
       .get(tokenVerify, personalTrainerController.getPackage)
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/:personalTrainerId`)
+      .get(tokenVerify, personalTrainerController.getPTById)
+
+    app
+      .route(
+        `${personalTrainerController.ENDPOINT}/:personalTrainerId/packages`,
+      )
+      .get(tokenVerify, personalTrainerController.getPackagesByTrainerId)
   }
 }
 

@@ -280,7 +280,7 @@ class SubscriptionPackageService {
   }
 
   /**
-   * Gets personal trainer package by ud
+   * Gets personal trainer package by id
    */
   public async getPTPackageById(packageId: string): Promise<PTPackageResponse> {
     const ptPackage = await this.ptPackage.findById(packageId)

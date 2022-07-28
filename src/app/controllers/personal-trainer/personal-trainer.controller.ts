@@ -225,6 +225,39 @@ class PersonalTrainerController {
       next(err)
     }
   }
+
+  /**
+   * Handles get personal trainer by id request
+   */
+  public async getPTById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { personalTrainerId } = req.params
+
+      const personalTrainer = await userService.getPTInfo(personalTrainerId)
+
+      return res.status(200).json(personalTrainer)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles get packages by personal trainer id
+   */
+  public async getPackagesByTrainerId(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { personalTrainerId } = req.params
+      const packages = await userService.getMyPackages(personalTrainerId)
+
+      return res.status(200).json(packages)
+    } catch (err) {
+      next(err)
+    }
+  }
 }
 
 export default new PersonalTrainerController()
