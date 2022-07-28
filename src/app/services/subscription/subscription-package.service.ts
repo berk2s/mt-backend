@@ -254,6 +254,30 @@ class SubscriptionPackageService {
     return Promise.resolve(SubscriptionMapper.ptPackagetoDTO(ptPackage))
   }
 
+  /**
+   * Deletes personal trainer package
+   */
+  public async deletePTPackage(packageId): Promise<void> {
+    const exists = await this.ptPackage.exists({
+      _id: packageId,
+    })
+
+    if (!exists) {
+      loggerService.warn(
+        `Personal Trainer package with the given id doesn't exists [packageId: ${packageId}]`,
+      )
+      throw new DocumentNotFound('package.notFound')
+    }
+
+    await this.ptPackage.deleteOne({
+      _id: packageId,
+    })
+
+    loggerService.info(
+      `Personal Trainer package with the given id deleted [packageId: ${packageId}]`,
+    )
+  }
+
   private async checkPTExists(ptId: string) {
     const exists = await userService.existsById(ptId)
 

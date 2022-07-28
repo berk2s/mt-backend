@@ -211,6 +211,10 @@ export class Routes {
         bodyValidation<UpdatePTPackageRequest>(UpdatePTPackageRequest),
         personalTrainerController.updatePTPackage,
       )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/packages/:packageId`)
+      .delete(tokenVerify, personalTrainerController.deletePTPackage)
   }
 }
 
