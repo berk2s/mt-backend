@@ -32,6 +32,7 @@ import {
   PTInfoRequest,
   RegisterPersonalTrainer,
   UpdatePTPackageRequest,
+  UpdatePTRequest,
 } from '@app/controllers/personal-trainer/personal-trainer.types'
 
 /**
@@ -215,6 +216,14 @@ export class Routes {
     app
       .route(`${personalTrainerController.ENDPOINT}/packages/:packageId`)
       .delete(tokenVerify, personalTrainerController.deletePTPackage)
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}`)
+      .put(
+        tokenVerify,
+        bodyValidation<UpdatePTRequest>(UpdatePTRequest),
+        personalTrainerController.updatePTProfile,
+      )
   }
 }
 

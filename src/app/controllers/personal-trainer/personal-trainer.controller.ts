@@ -7,6 +7,7 @@ import loggerService from '@app/services/logger/logger-service'
 import subscriptionPackageService from '@app/services/subscription/subscription-package.service'
 import userService from '@app/services/user/user.service'
 import { IncomingRequest } from '@app/types/controller.types'
+import { PTResponse } from '@app/types/response.types'
 import { NextFunction, Response, Request, RequestHandler } from 'express'
 import {
   AddCertificateImagesRequest,
@@ -15,6 +16,7 @@ import {
   PTListRequest,
   RegisterPersonalTrainer,
   UpdatePTPackageRequest,
+  UpdatePTRequest,
 } from './personal-trainer.types'
 
 /**
@@ -164,6 +166,25 @@ class PersonalTrainerController {
       await subscriptionPackageService.deletePTPackage(packageId)
 
       return res.status(200).json()
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles update personal trainer request
+   */
+  public async updatePTProfile(
+    req: IncomingRequest<UpdatePTRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const personalTrainer = await userService.updatePT(userId, req.bodyDto)
+
+      return res.status(200).json(personalTrainer)
     } catch (err) {
       next(err)
     }

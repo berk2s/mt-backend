@@ -7,7 +7,10 @@ import {
   UpdateAthleteRequest,
 } from '@app/controllers/athlete/athlete-controller.types'
 import { TokenResponse } from '@app/controllers/login/login-controller.types'
-import { RegisterPersonalTrainer } from '@app/controllers/personal-trainer/personal-trainer.types'
+import {
+  RegisterPersonalTrainer,
+  UpdatePTRequest,
+} from '@app/controllers/personal-trainer/personal-trainer.types'
 import { DocumentExists } from '@app/exceptions/document-exists-error'
 import { DocumentNotFound } from '@app/exceptions/document-not-found-error'
 import { UnauthorizedError } from '@app/exceptions/unauthorized-error'
@@ -362,6 +365,48 @@ class UserService {
     const personalTrainers = await this.ptModel.find()
 
     return Promise.resolve(UserMapper.personalTrainersToDTO(personalTrainers))
+  }
+
+  /**
+   * Updates personal trainer
+   */
+  public async updatePT(
+    ptId: string,
+    req: UpdatePTRequest,
+  ): Promise<PTResponse> {
+    const pt = await this.ptModel.findById(ptId)
+
+    if (!pt) {
+      loggerService.warn(
+        `Personal trainer with the given id doesn't exists [personalTrainerId: ${ptId}]`,
+      )
+      throw new DocumentNotFound('personalTrainer.notFound')
+    }
+
+    if (pt.email !== req.email) await this.checkEmailTaken(req.email)
+
+    pt.fullName = req.fullName
+    pt.email = req.email
+    pt.birthDate = req.birthday
+    pt.sex = req.gender
+    pt.languages = req.languages
+    pt.iban = req.iban
+    pt.gym = req.gym
+    pt.yearsOfExperience = req.yearsOfExperience
+
+    if (req.deletedCerfImages.length > 0) {
+      const deletedImgs = pt.certificates.filter(
+        (i) => !req.deletedCerfImages.includes(i),
+      )
+
+      pt.certificates = deletedImgs
+    }
+
+    await pt.save()
+
+    loggerService.info(`Personal trainer updated [personalTrainerId: ${ptId}]`)
+
+    return Promise.resolve(UserMapper.personalTrainerToDTO(pt))
   }
 
   private async checkGymExists(gymId: string) {
