@@ -228,11 +228,15 @@ export class Routes {
 
     app
       .route(`${personalTrainerController.ENDPOINT}/packages`)
-      .put(
+      .get(
         tokenVerify,
         bodyValidation<MyPackagesRequest>(MyPackagesRequest),
         personalTrainerController.getMyPackages,
       )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/packages/:packageId`)
+      .get(tokenVerify, personalTrainerController.getPackage)
   }
 }
 

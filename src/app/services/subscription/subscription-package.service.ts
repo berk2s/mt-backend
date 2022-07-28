@@ -23,6 +23,7 @@ import {
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { RandomUtility } from '@app/utilities/random-utility'
 import { Model } from 'mongoose'
+import { loggers } from 'winston'
 import loggerService from '../logger/logger-service'
 import stripeService from '../stripe/stripe.service'
 import userService from '../user/user.service'
@@ -257,7 +258,7 @@ class SubscriptionPackageService {
   /**
    * Deletes personal trainer package
    */
-  public async deletePTPackage(packageId): Promise<void> {
+  public async deletePTPackage(packageId: string): Promise<void> {
     const exists = await this.ptPackage.exists({
       _id: packageId,
     })
@@ -276,6 +277,22 @@ class SubscriptionPackageService {
     loggerService.info(
       `Personal Trainer package with the given id deleted [packageId: ${packageId}]`,
     )
+  }
+
+  /**
+   * Gets personal trainer package by ud
+   */
+  public async getPTPackageById(packageId: string): Promise<PTPackageResponse> {
+    const ptPackage = await this.ptPackage.findById(packageId)
+
+    if (!ptPackage) {
+      loggerService.warn(
+        `Personal Trainer package with the given id doesn't exists [packageId: ${packageId}]`,
+      )
+      throw new DocumentNotFound('package.notFound')
+    }
+
+    return Promise.resolve(SubscriptionMapper.ptPackagetoDTO(ptPackage))
   }
 
   private async checkPTExists(ptId: string) {
