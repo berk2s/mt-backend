@@ -76,3 +76,5 @@ export class CreatePTPackageRequest extends BodyDTO {
   @Expose()
   workoutType: string[]
 }
+
+export class PTInfoRequest extends BodyDTO {}

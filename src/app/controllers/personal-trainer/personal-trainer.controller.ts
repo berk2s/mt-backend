@@ -11,6 +11,7 @@ import { NextFunction, Response } from 'express'
 import {
   AddCertificateImagesRequest,
   CreatePTPackageRequest,
+  PTInfoRequest,
   RegisterPersonalTrainer,
 } from './personal-trainer.types'
 
@@ -83,6 +84,25 @@ class PersonalTrainerController {
       )
 
       return res.status(201).json(ptPackage)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  /**
+   * Handles get PT info rqeuest
+   */
+  public async getPTInfo(
+    req: IncomingRequest<PTInfoRequest>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { userId } = req
+
+      const ptInfo = await userService.getPTInfo(userId)
+
+      return res.status(200).json(ptInfo)
     } catch (err) {
       next(err)
     }

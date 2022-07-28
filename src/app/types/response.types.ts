@@ -119,3 +119,9 @@ export interface PTPackageResponse extends SubscriptionPackageResponse {
   workoutType: string[]
   personalTrainer: string
 }
+
+export interface PTResponse extends UserResponse {
+  yearsOfExperience: number
+  certificates: string[]
+  iban: string
+}

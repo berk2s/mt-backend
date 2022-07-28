@@ -14,7 +14,11 @@ import { UserMapper } from '@app/mappers/user.mapper'
 import { AthleteUser } from '@app/model/user/Athlete'
 import { BaseUser, BaseUserModel } from '@app/model/user/BaseUser'
 import { PersonalTrainerUser } from '@app/model/user/PersonalTrainer'
-import { AthleteResponse, UserResponse } from '@app/types/response.types'
+import {
+  AthleteResponse,
+  PTResponse,
+  UserResponse,
+} from '@app/types/response.types'
 import { ObjectIdUtility } from '@app/utilities/objectid-utility'
 import { TokenUtility } from '@app/utilities/token-utility'
 import { Model } from 'mongoose'
@@ -323,6 +327,15 @@ class UserService {
     )
 
     return Promise.resolve(UserMapper.baseUsertoDTO(pt))
+  }
+
+  /**
+   * Gets PT Info
+   */
+  public async getPTInfo(ptId: string): Promise<PTResponse> {
+    const personalTrainer = await this.ptModel.findById(ptId)
+
+    return Promise.resolve(UserMapper.personalTrainerToDTO(personalTrainer))
   }
 
   private async checkGymExists(gymId: string) {

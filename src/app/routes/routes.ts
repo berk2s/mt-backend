@@ -29,6 +29,7 @@ import discoveryController from '@app/controllers/discovery/discovery.controller
 import personalTrainerController from '@app/controllers/personal-trainer/personal-trainer.controller'
 import {
   CreatePTPackageRequest,
+  PTInfoRequest,
   RegisterPersonalTrainer,
 } from '@app/controllers/personal-trainer/personal-trainer.types'
 
@@ -188,6 +189,14 @@ export class Routes {
         tokenVerify,
         bodyValidation<CreatePTPackageRequest>(CreatePTPackageRequest),
         personalTrainerController.createPTPackage,
+      )
+
+    app
+      .route(`${personalTrainerController.ENDPOINT}/me`)
+      .get(
+        tokenVerify,
+        bodyValidation<PTInfoRequest>(PTInfoRequest),
+        personalTrainerController.getPTInfo,
       )
   }
 }
