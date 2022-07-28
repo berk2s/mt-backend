@@ -241,7 +241,7 @@ class SubscriptionPackageService {
 
     ptPackage.packageName = packageName
     ptPackage.packageDescription = packageDescription
-    ptPackage.unitAmonut = unitAmonut
+    ptPackage.price = unitAmonut
     ptPackage.currency = currency
     ptPackage.subscriptionInterval = subscriptionInterval
     ptPackage.workoutType = workoutType
