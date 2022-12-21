@@ -54,7 +54,6 @@ const deletedFileCallBack = (fileName: any) => (err: any) => {
   }
 
   loggerService.info(
-    'Log file which is older than 7 day has been deleted [fileName: {}]',
-    fileName,
+    `Log file which is older than 7 day has been deleted [fileName: ${fileName}]`,
   )
 }

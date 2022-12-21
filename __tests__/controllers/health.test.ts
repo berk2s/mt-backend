@@ -1,6 +1,6 @@
 import request from 'supertest'
 import server from '@app/app'
-import healthController from '@app/controllers/health-controller/health.controller'
+import healthController from '@app/controllers/health/health.controller'
 
 describe('Get ' + healthController.ENDPOINT, () => {
   it('should return successfully and application is live', async () => {
